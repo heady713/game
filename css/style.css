@@ -1,0 +1,76 @@
+@CHARSET "UTF-8";
+
+/**
+ * @Filename : style.css
+ * @Author : shiyuan
+ * @Finished ：2016年4月8日
+ * @Modified By ：shiyuan
+ * @Modified Date : 2016年4月8日
+ * @Modified Reasons :
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #FFFFFF;
+}
+
+.canvasContainer {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 3;
+    width: 100%;
+    height: 100%;
+}
+
+.background {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background-color: #DCD795;
+}
+
+.background .upBox {
+    width: 100%;
+    height: 50%;
+    background-color: #71C5CF;
+}
+
+.background .timer {
+    position: absolute;
+    left: 10%;
+    bottom: 10%;
+    width: 100px;
+    height: 50px;
+    background-color: #71C5CF;
+}
+
+.background .miles {
+    position: absolute;
+    right: 10%;
+    bottom: 10%;
+    width: 100px;
+    height: 50px;
+    background-color: #71C5CF;
+}
+
+.background .button {
+    position: absolute;
+    z-index: 4;
+    left: 50%;
+    bottom: 16%;
+    margin-left: -40px;
+    width: 80px;
+    height: 80px;
+    background-color: #71C5CF;
+}

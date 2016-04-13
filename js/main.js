@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 var canvasContainer, canvas, context;
 var monster1, monster2, monster3;
 var winWidth, winHeight;
+=======
+var canvasContainer;
+var mr = null,
+    bg = null,
+    gd = null;
+>>>>>>> refs/remotes/origin/master
 //空格键跳跃
 var keyUpEventHandler = function(event) {
     if (event.keyCode == 32) {
@@ -9,12 +16,22 @@ var keyUpEventHandler = function(event) {
 };
 // 初始化
 var initStage = function() {
+<<<<<<< HEAD
     canvasContainer = document.getElementById('gameing');
     resetStage();
+=======
+    var winHeight = $(window).height();
+    canvasContainer = document.getElementById('canvasContainer');
+    mr = new Player('palyer', canvasContainer, 'images/1.png', 'images/2.png');
+    bg = new Background('bg', canvasContainer, 'images/bg.png', 200, winHeight / 2 - 100, 40);
+    gd = new Background('gd', canvasContainer, 'images/gd.png', 16, winHeight / 2 + 100, 10);
+    //window.onresize = resizeHandler;
+>>>>>>> refs/remotes/origin/master
     window.onresize = resizeHandler;
     window.addEventListener("keydown", keyUpEventHandler, false);
 };
 var resizeHandler = function() {
+<<<<<<< HEAD
     resetStage();
 };
 var resetStage = function() {
@@ -32,16 +49,30 @@ var resetStage = function() {
     monster1 = new Monster(1);
     monster2 = new Monster(2);
     monster3 = new Monster(3);
+=======
+    mr.remove();
+    bg.remove();
+    gd.remove();
+    var winHeight = $(window).height();
+    mr = new Player('palyer', canvasContainer, 'images/1.png', 'images/2.png');
+    bg = new Background('bg', canvasContainer, 'images/bg.png', 200, winHeight / 2 - 100, 40);
+    gd = new Background('gd', canvasContainer, 'images/gd.png', 16, winHeight / 2 + 100, 10);
+>>>>>>> refs/remotes/origin/master
 };
 var readyStateCheckInterval = setInterval(function() {
     if (document.readyState === "complete") {
         clearInterval(readyStateCheckInterval);
         initStage();
+<<<<<<< HEAD
         requestAnimationFrame(loop, canvasContainer);
+=======
+        window.requestAnimationFrame(renderPlayer, canvasContainer);
+>>>>>>> refs/remotes/origin/master
     }
 }, 10);
 var renderPlayer = function() {};
 // 主函数
+<<<<<<< HEAD
 window.requestAnimationFrame = window.__requestAnimationFrame ||
     //
     window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
@@ -88,3 +119,17 @@ var monsterSpeed = 1,
         monster.y -= monsterSpeed;
         context.drawImage(monster, monster.x, monster.y);
     };
+=======
+window.requestAnimationFrame = window.__requestAnimationFrame || window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || (function() {
+    return function(callback, element) {
+        var lastTime = element.__lastTime;
+        if (lastTime === undefined) {
+            lastTime = 0;
+        }
+        var currTime = Date.now();
+        var timeToCall = Math.max(1, 33 - (currTime - lastTime));
+        window.setTimeout(callback, timeToCall);
+        element.__lastTime = currTime + timeToCall;
+    };
+})();
+>>>>>>> refs/remotes/origin/master

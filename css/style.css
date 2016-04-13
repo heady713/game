@@ -1,0 +1,124 @@
+@CHARSET "UTF-8";
+
+/**
+ * @Filename : style.css
+ * @Author : shiyuan
+ * @Finished ：2016年4月8日
+ * @Modified By ：shiyuan
+ * @Modified Date : 2016年4月8日
+ * @Modified Reasons :
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    font: 12px/1.5em Helvetica Neue, Helvetica, Arial, sans-serif;
+    letter-spacing: 1px;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #FFFFFF;
+}
+
+
+/*======================::background::=======================*/
+
+.background {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    background: #34AD36;
+}
+
+.background .present {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    width: 60px;
+    height: 60px;
+    background: #474747;
+}
+
+.background .downBox {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    height: 30%;
+    text-align: center;
+}
+
+.background .downBox .btnStart {
+    position: relative;
+    left: 50%;
+    margin-left: -80px;
+    width: 160px;
+    height: 40px;
+    line-height: 42px;
+    color: #FFEBB2;
+    font-size: 1.6em;
+    text-align: center;
+    background: #E67422;
+    display: block;
+}
+
+.background .downBox .countInfo {
+    position: relative;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    color: #fff;
+    font-size: 1.4em;
+    text-align: center;
+}
+
+.background .downBox .countInfo span {
+    color: #FFEBB2;
+    font-size: 1.4em;
+}
+
+
+/*======================::palyer::=======================*/
+
+.background .player {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80px;
+    height: 120px;
+    margin-left: -40px;
+    margin-top: -60px;
+    background: #FFCBA7;
+}
+
+.background .monster1 {
+    position: absolute;
+    left: 10%;
+    bottom: 0px;
+    width: 80px;
+    height: 120px;
+    background: #FFCBA7;
+}
+
+.background .monster2 {
+    position: absolute;
+    left: 40%;
+    bottom: 0px;
+    width: 80px;
+    height: 120px;
+    background: #FFCBA7;
+}
+
+.background .monster3 {
+    position: absolute;
+    left: 70%;
+    bottom: 0px;
+    width: 80px;
+    height: 120px;
+    background: #FFCBA7;
+}

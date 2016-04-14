@@ -15,7 +15,6 @@ var initStage = function() {
     resetStage();
     var myTouch = util.toucher(document.getElementById('gameing'));
     myTouch.on('swipe', function(e) {
-        stopPropagation(e);
         if (e.moveX >= winWidth * touchCache) { //right
             player.moving = true;
             player.moveDirect = 1;
@@ -28,6 +27,9 @@ var initStage = function() {
             player.jumpDirect = 1;
         }
         stopPropagation(e);
+    });
+    $('body').on('touchmove touchstart', function(event) {
+        event.preventDefault();
     });
     requestAnimationFrame(loop, canvasContainer);
 };

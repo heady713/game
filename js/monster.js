@@ -9,9 +9,11 @@ var DF = {
         hOffset: 0.1
     },
     P: {
-        pathWidth: 50,
+        pathWidth: 60,
         moveSpeed: 5,
-        gravity: 0.1
+        jumpSpeedFinal: 6,
+        jumpSpeed: 6,
+        gravity: 0.2
     }
 };
 //========================================================================
@@ -30,7 +32,10 @@ var Player = function() {
     this.image.src = 'images/player_s.png';
     context.drawImage(this.image, this.self.x, this.self.y);
     this.speed = 2;
-    this.direction = 0;
+    this.moving = false;
+    this.moveDirect = 0;
+    this.jumping = false;
+    this.jumpDirect = 0;
     this.pathIndex = 2;
     this.center = {
         x: this.x,
@@ -39,8 +44,39 @@ var Player = function() {
 };
 //更新位置
 Player.prototype.update = function() {
-    if (Math.abs(this.self.x - this.x) >= 50) {
-        this.direction = 0;
+    if (this.moving) {
+        this.move();
+    }
+    if (this.jumping) {
+        this.jump();
+    }
+    context.drawImage(this.image, this.self.x, this.self.y);
+};
+// Jump
+Player.prototype.jump = function() {
+    if (this.jumpDirect == 1) {
+        this.self.y -= DF.P.jumpSpeed;
+        DF.P.jumpSpeed -= DF.P.gravity;
+        if (DF.P.jumpSpeed <= 0) {
+            this.jumpDirect = -1;
+        }
+    } else if (this.jumpDirect == -1) {
+        DF.P.jumpSpeed += DF.P.gravity;
+        this.self.y += DF.P.jumpSpeed;
+        if (DF.P.jumpSpeed >= DF.P.jumpSpeedFinal) {
+            this.jumpDirect = 0;
+        }
+    } else {
+        this.jumping = false;
+        DF.P.jumpSpeed = DF.P.jumpSpeedFinal;
+        this.self.y = this.y;
+    }
+};
+// Move
+Player.prototype.move = function() {
+    if (Math.abs(this.self.x - this.x) >= DF.P.pathWidth) {
+        this.moveDirect = 0;
+        this.moving = false;
         this.x = this.self.x;
         if (this.x < this.center.x) {
             this.pathIndex = 1;
@@ -50,12 +86,11 @@ Player.prototype.update = function() {
             this.pathIndex = 2;
         }
     }
-    if (this.direction > 0 && this.pathIndex < 3) {
+    if (this.moveDirect > 0 && this.pathIndex < 3) {
         this.self.x = this.self.x + DF.P.moveSpeed;
-    } else if (this.direction < 0 && this.pathIndex > 1) {
+    } else if (this.moveDirect < 0 && this.pathIndex > 1) {
         this.self.x = this.self.x - DF.P.moveSpeed;
     }
-    context.drawImage(this.image, this.self.x, this.self.y);
 };
 //========================================================================
 //======================== :: Monster :: ==================================

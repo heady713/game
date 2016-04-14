@@ -15,14 +15,19 @@ var initStage = function() {
     resetStage();
     var myTouch = util.toucher(document.getElementById('gameing'));
     myTouch.on('swipeLeft', function(e) {
-        player.direction = -1;
-        console.log(-1)
+        player.moving = true;
+        player.moveDirect = -1;
+        stopPropagation(e);
     }).on('swipeRight', function(e) {
-        player.direction = 1;
-        console.log(1)
+        player.moving = true;
+        player.moveDirect = 1;
+        stopPropagation(e);
     }).on('swipeUp', function(e) {
-        player.direction = 0;
-        console.log(0)
+        player.jumping = true;
+        player.jumpDirect = 1;
+        stopPropagation(e);
+    }).on('swipeDown', function(e) {
+        stopPropagation(e);
     });
     requestAnimationFrame(loop, canvasContainer);
 };
@@ -96,4 +101,12 @@ var renderMonster = function() {
 // 获取随机数
 var getRoundVal = function(base, round) {
     return (Math.round(Math.random() * round) + base);
+};
+// Stop Propagation
+var stopPropagation = function(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    } else {
+        e.cancelBubble = true;
+    }
 };

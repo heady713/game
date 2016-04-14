@@ -1,6 +1,7 @@
 var canvasContainer, canvas, context;
 var player, monsters = [];
 var winWidth, winHeight;
+var startTouchPoint;
 //空格键跳跃
 var keyUpEventHandler = function(event) {
     if (event.keyCode == 32) {
@@ -12,12 +13,16 @@ var initStage = function() {
     canvasContainer = document.getElementById('gameing');
     window.onresize = resizeHandler;
     resetStage();
-    $('#gameing').on('swipeLeft', function() {
+    var myTouch = util.toucher(document.getElementById('gameing'));
+    myTouch.on('swipeLeft', function(e) {
         player.direction = -1;
-    }).on('swipeRight', function() {
+        console.log(-1)
+    }).on('swipeRight', function(e) {
         player.direction = 1;
-    }).on('swipeUp', function() {
-        //player.direction=-1;
+        console.log(1)
+    }).on('swipeUp', function(e) {
+        player.direction = 0;
+        console.log(0)
     });
     requestAnimationFrame(loop, canvasContainer);
 };

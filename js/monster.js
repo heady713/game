@@ -10,7 +10,7 @@ var DF = {
     },
     P: {
         pathWidth: 50,
-        moveSpeed: 0.1,
+        moveSpeed: 5,
         gravity: 0.1
     }
 };
@@ -53,7 +53,7 @@ Player.prototype.update = function() {
     if (this.direction > 0 && this.pathIndex < 3) {
         this.self.x = this.self.x + DF.P.moveSpeed;
     } else if (this.direction < 0 && this.pathIndex > 1) {
-        this.self.x = this.self.x - DF.M.pathOffset;
+        this.self.x = this.self.x - DF.P.moveSpeed;
     }
     context.drawImage(this.image, this.self.x, this.self.y);
 };

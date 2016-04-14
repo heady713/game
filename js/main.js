@@ -27,6 +27,7 @@ var initStage = function() {
             player.jumping = true;
             player.jumpDirect = 1;
         }
+        stopPropagation(e);
     });
     requestAnimationFrame(loop, canvasContainer);
 };
@@ -108,4 +109,5 @@ var stopPropagation = function(e) {
     } else {
         e.cancelBubble = true;
     }
+    window.event ? window.event.returnValue = false : e.preventDefault();
 };

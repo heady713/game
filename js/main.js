@@ -28,9 +28,6 @@ var initStage = function() {
         }
         stopPropagation(e);
     });
-    $('body').on('touchmove touchstart', function(event) {
-        event.preventDefault();
-    });
     requestAnimationFrame(loop, canvasContainer);
 };
 var resizeHandler = function() {
@@ -39,7 +36,7 @@ var resizeHandler = function() {
 var resetStage = function() {
     winWidth = $(canvasContainer).width();
     winHeight = $(canvasContainer).height();
-    DF.M.maxPath = winHeight / 4 * 3;
+    DF.M.maxPath = winHeight / 5 * 4;
     if (canvas) {
         canvasContainer.removeChild(canvas);
     }
@@ -52,10 +49,14 @@ var resetStage = function() {
     player = new Player();
 };
 $(function() {
-    $('#gameBefore').on('click', '#btnStart', function() {
+    $('#gameBefore').on('touchstart', '#btnStart', function(event) {
         $('#gameBefore').hide();
         $('#gameing').show();
         initStage();
+        stopPropagation(event);
+    });
+    $('body').on('touchmove touchstart', function(event) {
+        event.preventDefault();
     });
 });
 // 主函数
@@ -86,9 +87,10 @@ var nextMonster = false,
 var renderMonster = function() {
     if (!nextMonster) {
         var randomTime = getRoundVal(1000, 3000);
-        nextTime = currTime + randomTime;
         var pathIndex = getRoundVal(1, 2);
-        monster = new Monster(pathIndex, 50, 50, monIndex);
+        var type = getRoundVal(0, 5);
+        nextTime = currTime + randomTime;
+        monster = new Monster(DF.M.types[type], pathIndex, 50, 50, monIndex);
         monsters[monIndex] = monster;
         nextMonster = true;
         monIndex++;
@@ -111,5 +113,4 @@ var stopPropagation = function(e) {
     } else {
         e.cancelBubble = true;
     }
-    window.event ? window.event.returnValue = false : e.preventDefault();
 };

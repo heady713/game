@@ -2,12 +2,6 @@ var canvasContainer, canvas, context;
 var player, monsters = [];
 var winWidth, winHeight;
 var startTouchPoint, touchCache = 0.2;
-//空格键跳跃
-var keyUpEventHandler = function(event) {
-    if (event.keyCode == 32) {
-        //
-    }
-};
 // 初始化
 var initStage = function() {
     canvasContainer = document.getElementById('gameing');
@@ -99,7 +93,7 @@ var renderMonster = function() {
         nextMonster = false;
     }
     for (var key in monsters) {
-        monsters[key].update();
+        monsters[key].update(player);
     }
 };
 // 获取随机数

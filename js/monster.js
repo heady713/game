@@ -22,16 +22,18 @@ var DF = {
 //========================================================================
 // 创建
 var Player = function() {
-    this.self = {};
-    this.width = 56;
-    this.height = 80;
+    this.self = document.createElement('canvas');
+    this.self.width = this.width = 56;
+    this.self.height = this.height = 80;
     this.self.x = this.x = (winWidth - this.width) / 2;
     this.self.y = this.y = (winHeight - this.height * 2) / 2;
     this.image = new Image();
     this.image.width = this.width;
     this.image.height = this.height;
     this.image.src = 'images/Player.png';
-    context.drawImage(this.image, this.self.x, this.self.y);
+    this.context = this.self.getContext('2d');
+    this.context.drawImage(this.image, 0, 0);
+    context.drawImage(this.self, this.self.x, this.self.y);
     this.moving = false;
     this.moveDirect = 0;
     this.jumping = false;
@@ -50,7 +52,10 @@ Player.prototype.update = function() {
     if (this.jumping) {
         this.jump();
     }
-    context.drawImage(this.image, this.self.x, this.self.y);
+    this.context = this.self.getContext('2d');
+    this.context.drawImage(this.image, 0, 0);
+    context.globalCompositeOperation = "source-over";
+    context.drawImage(this.self, this.self.x, this.self.y);
 };
 // Jump
 Player.prototype.jump = function() {
@@ -116,9 +121,28 @@ var Monster = function(type, pathIndex, width, height, index) {
     this.alive = true;
 };
 //更新位置
-Monster.prototype.update = function() {
+Monster.prototype.update = function(target) {
+    if (target.jumping) {
+        if (this.self.y - target.self.y < target.height) {
+            context.globalCompositeOperation = "destination-over";
+        }
+    } else {
+        context.globalCompositeOperation = "source-over";
+        if (this.self.y - target.self.y < target.height && this.self.y - target.self.y > 0) {
+            if (this.self.x > target.self.x && this.self.x - target.self.x < target.width) {
+                this.alive = false;
+            } else if (this.self.x < target.self.x && target.self.x - this.self.x < this.width) {
+                this.alive = false;
+            }
+        }
+    }
+    this.move();
+};
+//MOVE
+Monster.prototype.move = function() {
     if (!this.alive) {
         return false;
+        delete monsters[this.index];
     }
     var offset = this.width * (1 - DF.M.scale);
     switch (this.pathIndex) {

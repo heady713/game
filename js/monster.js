@@ -10,7 +10,7 @@ var DF = {
     },
     P: {
         pathWidth: 60,
-        moveSpeed: 5,
+        moveSpeed: 2,
         jumpSpeedFinal: 6,
         jumpSpeed: 6,
         gravity: 0.2
@@ -31,7 +31,6 @@ var Player = function() {
     this.image.height = this.height;
     this.image.src = 'images/player_s.png';
     context.drawImage(this.image, this.self.x, this.self.y);
-    this.speed = 2;
     this.moving = false;
     this.moveDirect = 0;
     this.jumping = false;

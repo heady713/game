@@ -1,51 +1,110 @@
-var canvasContainer;
-var mr = null,
-    bg = null,
-    gd = null;
-//空格键跳跃
-var keyUpEventHandler = function(event) {
-    if (event.keyCode == 32) {
-        mr.jump(event);
-    }
-};
+var canvasContainer, canvas, context;
+var player, monsters = [];
+var winWidth, winHeight;
+var startTouchPoint, touchCache = 0.2;
 // 初始化
 var initStage = function() {
-    var winHeight = $(window).height();
-    canvasContainer = document.getElementById('canvasContainer');
-    mr = new Player('palyer', canvasContainer, 'images/1.png', 'images/2.png');
-    bg = new Background('bg', canvasContainer, 'images/bg.png', 200, winHeight / 2 - 100, 40);
-    gd = new Background('gd', canvasContainer, 'images/gd.png', 16, winHeight / 2 + 100, 10);
-    //window.onresize = resizeHandler;
+    canvasContainer = document.getElementById('gameing');
     window.onresize = resizeHandler;
-    window.addEventListener("keydown", keyUpEventHandler, false);
+    resetStage();
+    var myTouch = util.toucher(document.getElementById('gameing'));
+    myTouch.on('swipe', function(e) {
+        if (e.moveX >= winWidth * touchCache) { //right
+            player.moving = true;
+            player.moveDirect = 1;
+        } else if (e.moveX <= -winWidth * touchCache) { //left
+            player.moving = true;
+            player.moveDirect = -1;
+        }
+        if (e.moveY <= -winWidth * touchCache) { //up
+            player.jumping = true;
+            player.jumpDirect = 1;
+        }
+        stopPropagation(e);
+    });
+    requestAnimationFrame(loop, canvasContainer);
 };
 var resizeHandler = function() {
-    mr.remove();
-    bg.remove();
-    gd.remove();
-    var winHeight = $(window).height();
-    mr = new Player('palyer', canvasContainer, 'images/1.png', 'images/2.png');
-    bg = new Background('bg', canvasContainer, 'images/bg.png', 200, winHeight / 2 - 100, 40);
-    gd = new Background('gd', canvasContainer, 'images/gd.png', 16, winHeight / 2 + 100, 10);
+    resetStage();
 };
-var readyStateCheckInterval = setInterval(function() {
-    if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-        initStage();
-        window.requestAnimationFrame(renderPlayer, canvasContainer);
+var resetStage = function() {
+    winWidth = $(canvasContainer).width();
+    winHeight = $(canvasContainer).height();
+    DF.M.maxPath = winHeight / 5 * 4;
+    if (canvas) {
+        canvasContainer.removeChild(canvas);
     }
-}, 10);
-var renderPlayer = function() {};
+    canvas = document.createElement('canvas');
+    canvas.width = winWidth;
+    canvas.height = winHeight;
+    canvas.style.position = "absolute";
+    context = canvas.getContext("2d");
+    canvasContainer.appendChild(canvas);
+    player = new Player();
+};
+$(function() {
+    $('#gameBefore').on('touchstart', '#btnStart', function(event) {
+        $('#gameBefore').hide();
+        $('#gameing').show();
+        initStage();
+        stopPropagation(event);
+    });
+    $('body').on('touchmove touchstart', function(event) {
+        event.preventDefault();
+    });
+});
 // 主函数
-window.requestAnimationFrame = window.__requestAnimationFrame || window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || (function() {
-    return function(callback, element) {
-        var lastTime = element.__lastTime;
-        if (lastTime === undefined) {
-            lastTime = 0;
-        }
-        var currTime = Date.now();
-        var timeToCall = Math.max(1, 33 - (currTime - lastTime));
-        window.setTimeout(callback, timeToCall);
-        element.__lastTime = currTime + timeToCall;
-    };
-})();
+window.requestAnimationFrame = window.__requestAnimationFrame ||
+    //
+    window.requestAnimationFrame || window.webkitRequestAnimationFrame ||
+    //
+    window.mozRequestAnimationFrame || window.oRequestAnimationFrame ||
+    //
+    window.msRequestAnimationFrame || (function() {
+        return function(callback) {
+            window.setTimeout(callback, 24);
+        };
+    })();
+// 循环
+var loop = function() {
+    currTime = new Date().getTime();
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    player.update();
+    renderMonster();
+    requestAnimationFrame(loop, canvasContainer);
+};
+var nextMonster = false,
+    monIndex = 0,
+    nextTime = null,
+    currTime = null;
+// 随机加载
+var renderMonster = function() {
+    if (!nextMonster) {
+        var randomTime = getRoundVal(1000, 3000);
+        var pathIndex = getRoundVal(1, 2);
+        var type = getRoundVal(0, 5);
+        nextTime = currTime + randomTime;
+        monster = new Monster(DF.M.types[type], pathIndex, 50, 50, monIndex);
+        monsters[monIndex] = monster;
+        nextMonster = true;
+        monIndex++;
+    }
+    if (currTime > nextTime) {
+        nextMonster = false;
+    }
+    for (var key in monsters) {
+        monsters[key].update(player);
+    }
+};
+// 获取随机数
+var getRoundVal = function(base, round) {
+    return (Math.round(Math.random() * round) + base);
+};
+// Stop Propagation
+var stopPropagation = function(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    } else {
+        e.cancelBubble = true;
+    }
+};

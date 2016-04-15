@@ -10,10 +10,10 @@ var DF = {
         rotate: 1
     },
     P: {
-        pathWidth: 60,
+        pathWidth: 70,
         moveSpeed: 2,
-        jumpSpeedFinal: 6,
-        jumpSpeed: 6,
+        jumpSpeedFinal: 5,
+        jumpSpeed: 5,
         gravity: 0.2
     }
 };
@@ -95,6 +95,8 @@ Player.prototype.move = function() {
         this.self.x = this.self.x + DF.P.moveSpeed;
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
         this.self.x = this.self.x - DF.P.moveSpeed;
+    } else {
+        this.moving = false;
     }
 };
 //========================================================================

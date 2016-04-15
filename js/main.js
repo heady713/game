@@ -10,15 +10,21 @@ var initStage = function() {
     var myTouch = util.toucher(document.getElementById('gameing'));
     myTouch.on('swipe', function(e) {
         if (e.moveX >= winWidth * touchCache) { //right
-            player.moving = true;
-            player.moveDirect = 1;
+            if (!player.moving) {
+                player.moving = true;
+                player.moveDirect = 1;
+            }
         } else if (e.moveX <= -winWidth * touchCache) { //left
-            player.moving = true;
-            player.moveDirect = -1;
+            if (!player.moving) {
+                player.moving = true;
+                player.moveDirect = -1;
+            }
         }
         if (e.moveY <= -winWidth * touchCache) { //up
-            player.jumping = true;
-            player.jumpDirect = 1;
+            if (!player.jumping) {
+                player.jumping = true;
+                player.jumpDirect = 1;
+            }
         }
         stopPropagation(e);
     });

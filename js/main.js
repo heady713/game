@@ -36,7 +36,7 @@ var resizeHandler = function() {
 var resetStage = function() {
     winWidth = $(canvasContainer).width();
     winHeight = $(canvasContainer).height();
-    DF.M.maxPath = winHeight / 5 * 4;
+    DF.M.maxPath = winHeight / 12 * 7;
     if (canvas) {
         canvasContainer.removeChild(canvas);
     }

@@ -5,8 +5,10 @@ var DF = {
     M: {
         types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
         maxPath: 0,
-        pathOffset: 0.3,
-        scale: 0.995,
+        pathOffset1: 0.6,
+        pathOffset2: 0.3,
+        pathOffset3: 0.8,
+        scale: 0.99,
         rotate: 1
     },
     P: {
@@ -14,7 +16,9 @@ var DF = {
         moveSpeed: 2,
         jumpSpeedFinal: 5,
         jumpSpeed: 5,
-        gravity: 0.2
+        gravity: 0.2,
+        cutImgTimeFinal: 20,
+        cutImgTime: 20
     }
 };
 //========================================================================
@@ -26,7 +30,7 @@ var Player = function() {
     this.self.width = this.width = 56;
     this.self.height = this.height = 80;
     this.self.x = this.x = (winWidth - this.width) / 2;
-    this.self.y = this.y = (winHeight - this.height * 2) / 2;
+    this.self.y = this.y = winHeight - DF.M.maxPath / 5 * 4;
     this.image = new Image();
     this.image.width = this.width;
     this.image.height = this.height;
@@ -38,13 +42,14 @@ var Player = function() {
     this.moveDirect = 0;
     this.jumping = false;
     this.jumpDirect = 0;
+    this.hurt = false;
     this.pathIndex = 2;
     this.center = {
         x: this.x,
         y: this.y
     };
 };
-//更新位置
+// 更新位置
 Player.prototype.update = function() {
     if (this.moving) {
         this.move();
@@ -52,10 +57,23 @@ Player.prototype.update = function() {
     if (this.jumping) {
         this.jump();
     }
+    this.context.clearRect(0, 0, this.self.width, this.self.height);
     this.context = this.self.getContext('2d');
     this.context.drawImage(this.image, 0, 0);
+    if (!this.jumping && !this.hurt) {
+        this.cutImg();
+    }
     context.globalCompositeOperation = "source-over";
     context.drawImage(this.self, this.self.x, this.self.y);
+};
+// 切图
+Player.prototype.cutImg = function() {
+    if (DF.P.cutImgTime === 0) {
+        this.context.translate(this.width, 0);
+        this.context.scale(-1, 1);
+        DF.P.cutImgTime = DF.P.cutImgTimeFinal;
+    }
+    DF.P.cutImgTime--;
 };
 // Jump
 Player.prototype.jump = function() {
@@ -149,10 +167,13 @@ Monster.prototype.move = function() {
     var offset = this.width * (1 - DF.M.scale);
     switch (this.pathIndex) {
         case 1:
-            this.self.x = this.self.x + DF.M.pathOffset;
+            this.self.x = this.self.x + DF.M.pathOffset1;
+            break;
+        case 1:
+            this.self.x = this.self.x - DF.M.pathOffset2;
             break;
         case 3:
-            this.self.x = this.self.x - DF.M.pathOffset;
+            this.self.x = this.self.x - DF.M.pathOffset3;
             break;
     }
     this.self.x += offset;

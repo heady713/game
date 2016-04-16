@@ -11,10 +11,10 @@ var DF = {
     },
     P: {
         pathWidth: 70,
-        moveSpeed: 2,
-        jumpSpeedFinal: 5,
+        moveSpeed: 4,
+        jumpSpeedFinal: 6,
         jumpSpeed: 5,
-        gravity: 0.2
+        gravity: 0.25
     }
 };
 //========================================================================
@@ -44,7 +44,7 @@ var Player = function() {
         y: this.y
     };
 };
-//更新位置
+// 更新位置
 Player.prototype.update = function() {
     if (this.moving) {
         this.move();

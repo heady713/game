@@ -119,21 +119,20 @@ window.requestAnimationFrame = window.__requestAnimationFrame ||
 var loop = function() {
     currTime = new Date().getTime();
     var runingTime = currTime - startTime;
-    countDown -= refreshDelay;
     var isContinue = true;
-    if (countDown <= 0) {
-        countDown = 0;
+    if (mileIndex >= 20) {
+        mileIndex = 0;
         isContinue = false;
     }
-    document.getElementById('timer').innerText = formatMilli(countDown);
-    document.getElementById('miles').innerText = formatMiles(runingTime);
+    document.getElementById('timer').innerText = formatMilli(runingTime);
+    //document.getElementById('miles').innerText = formatMiles(runingTime);
     context.clearRect(0, 0, canvas.width, canvas.height);
     if (isContinue) {
         player.update();
         shadow.update();
         renderMonster();
         renderAsideMile();
-        requestAnimationFrame(loop, canvasContainer);
+        requestAnimationFrame(loop);
     } else {
         $('#gameAfter').show();
     }
@@ -144,6 +143,9 @@ var nextMonster = false,
     currTime = null;
 // 随机加载障碍
 var renderMonster = function() {
+    if (currTime > nextMonTime && nextMonster) {
+        nextMonster = false;
+    }
     if (!nextMonster) {
         var randomTime = getRoundVal(1000, 3000);
         var pathIndex = getRoundVal(1, 2);
@@ -154,27 +156,24 @@ var renderMonster = function() {
         nextMonster = true;
         monIndex++;
     }
-    if (currTime > nextMonTime) {
-        nextMonster = false;
-    }
     for (var key in monsters) {
         monsters[key].update(player);
     }
 };
 var nextAsideMile = false,
     mileIndex = 0,
-    nextMileTime = null;
+    nextMileTime = 0;
 // 顺序加载数字
 var renderAsideMile = function() {
+    if (currTime >= nextMileTime && nextAsideMile) {
+        nextAsideMile = false;
+        mileIndex++;
+    }
     if (!nextAsideMile) {
         nextMileTime = currTime + 3000;
         var temp = new AsideMile(DF.Miles[mileIndex], 100, 100, mileIndex);
         asideMiles[mileIndex] = temp;
         nextAsideMile = true;
-        mileIndex++;
-    }
-    if (currTime > nextMileTime) {
-        nextAsideMile = false;
     }
     for (var key in asideMiles) {
         asideMiles[key].update(player);
@@ -197,7 +196,7 @@ var formatMilli = function(milli) {
     var s = parseInt(milli / 1000),
         m = milli % 1000;
     m = parseInt(m / 100);
-    return (s < 10 ? '0' + s : s) + '\'' + m;
+    return s + '\'' + m; //(s < 10 ? '0' + s : s)
 };
 // formatMiles
 var formatMiles = function(milli) {

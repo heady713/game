@@ -215,13 +215,23 @@ html, body {
     height: 143px;
 }
 
+.gameAfter .container .header {
+    position: absolute;
+    top: 0px;
+}
+
+.gameAfter .container .infoBox {
+    position: absolute;
+    bottom: 0px;
+}
+
 .gameAfter .container p {
-    font: normal 1em/1.8em 'Microsoft Yahei', Arial, sans-serif;
+    font: normal 1.1em/1.8em 'Microsoft Yahei', Arial, sans-serif;
     color: #fff;
 }
 
 .gameAfter .container p span {
-    font-size: 1em;
+    font-size: 1.1em;
 }
 
 .gameAfter .container .downBox {

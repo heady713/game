@@ -1,5 +1,6 @@
 var canvasContainer, canvas, context;
-var player, monsters = [];
+var player, shadow, monsters = [],
+    asideMiles = [];
 var winWidth, winHeight, isGuide = false;
 var startTouchPoint, touchCache = 0.2;
 var startTime, countDown = 60000,
@@ -45,11 +46,15 @@ var initStage = function() {
             if (!player.moving) {
                 player.moving = true;
                 player.moveDirect = 1;
+                shadow.moving = true;
+                shadow.moveDirect = 1;
             }
         } else if (e.moveX <= -winWidth * touchCache) { //left
             if (!player.moving) {
                 player.moving = true;
                 player.moveDirect = -1;
+                shadow.moving = true;
+                shadow.moveDirect = -1;
             }
         }
         if (e.moveY <= -winWidth * touchCache) { //up
@@ -79,7 +84,8 @@ var resizeHandler = function() {
 var resetStage = function() {
     winWidth = $(canvasContainer).width();
     winHeight = $(canvasContainer).height();
-    DF.M.maxPath = winHeight / 12 * 7;
+    DF.M.maxPath = winHeight / 80 * 63;
+    DF.M.maxPathMile = winHeight / 80 * 61;
     if (canvas) {
         canvasContainer.removeChild(canvas);
     }
@@ -90,7 +96,11 @@ var resetStage = function() {
     context = canvas.getContext("2d");
     canvasContainer.appendChild(canvas);
     player = null;
+    shadow = null;
     monsters = [];
+    mileIndex = 0;
+    asideMiles = [];
+    shadow = new Shadow();
     player = new Player();
 };
 // 主函数
@@ -120,7 +130,9 @@ var loop = function() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     if (isContinue) {
         player.update();
+        shadow.update();
         renderMonster();
+        renderAsideMile();
         requestAnimationFrame(loop, canvasContainer);
     } else {
         $('#gameAfter').show();
@@ -128,25 +140,44 @@ var loop = function() {
 };
 var nextMonster = false,
     monIndex = 0,
-    nextTime = null,
+    nextMonTime = null,
     currTime = null;
-// 随机加载
+// 随机加载障碍
 var renderMonster = function() {
     if (!nextMonster) {
         var randomTime = getRoundVal(1000, 3000);
         var pathIndex = getRoundVal(1, 2);
-        var type = getRoundVal(0, 5);
-        nextTime = currTime + randomTime;
-        monster = new Monster(DF.M.types[type], pathIndex, 50, 50, monIndex);
-        monsters[monIndex] = monster;
+        var type = getRoundVal(0, DF.M.types.length - 1);
+        nextMonTime = currTime + randomTime;
+        temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);
+        monsters[monIndex] = temp;
         nextMonster = true;
         monIndex++;
     }
-    if (currTime > nextTime) {
+    if (currTime > nextMonTime) {
         nextMonster = false;
     }
     for (var key in monsters) {
         monsters[key].update(player);
+    }
+};
+var nextAsideMile = false,
+    mileIndex = 0,
+    nextMileTime = null;
+// 顺序加载数字
+var renderAsideMile = function() {
+    if (!nextAsideMile) {
+        nextMileTime = currTime + 3000;
+        var temp = new AsideMile(DF.Miles[mileIndex], 100, 100, mileIndex);
+        asideMiles[mileIndex] = temp;
+        nextAsideMile = true;
+        mileIndex++;
+    }
+    if (currTime > nextMileTime) {
+        nextAsideMile = false;
+    }
+    for (var key in asideMiles) {
+        asideMiles[key].update(player);
     }
 };
 // 获取随机数

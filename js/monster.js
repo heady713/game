@@ -1,6 +1,6 @@
-//========================================================================
-//======================== :: DF :: ==================================
-//========================================================================
+//========================================================================//
+//======================== :: DF :: ======================================//
+//========================================================================//
 var DF = {
     M: {
         //types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
@@ -14,8 +14,8 @@ var DF = {
         maxPathMile: 0,
         pathOffset4: 0.9,
         scaleMile: 0.99,
-        cutImgTimeFinal: 25,
-        cutImgTime: 25,
+        cutImgTimeFinal: 10,
+        cutImgTime: 10,
         cutImgIndex: 0
     },
     P: {
@@ -28,11 +28,11 @@ var DF = {
         cutImgTimeFinal: 25,
         cutImgTime: 25
     },
-    Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95']
+    Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
 };
-//========================================================================
-//======================== :: Player :: ==================================
-//========================================================================
+//========================================================================//
+//======================== :: Player :: ==================================//
+//========================================================================//
 // 创建
 var Player = function() {
     this.self = document.createElement('canvas');
@@ -130,9 +130,9 @@ Player.prototype.move = function() {
         this.moving = false;
     }
 };
-//========================================================================
-//======================== :: Shadow :: ==================================
-//========================================================================
+//========================================================================//
+//======================== :: Shadow :: ==================================//
+//========================================================================//
 // 创建
 var Shadow = function() {
     this.self = document.createElement('canvas');
@@ -195,9 +195,9 @@ Shadow.prototype.move = function() {
         this.moving = false;
     }
 };
-//========================================================================
-//======================== :: Monster :: ==================================
-//========================================================================
+//========================================================================//
+//======================== :: Monster :: =================================//
+//========================================================================//
 // 创建
 var Monster = function(type, pathIndex, width, height, index) {
     this.self = document.createElement('canvas');
@@ -262,7 +262,8 @@ Monster.prototype.move = function() {
         this.alive = false;
         delete monsters[this.index];
     } else {
-        this.context.clearRect(0, 0, this.self.width, this.self.height);
+        this.cutImg();
+        this.context.clearRect(0, 0, this.self.width + 1, this.self.height + 1);
         this.context.scale(DF.M.scale, DF.M.scale);
         this.context.drawImage(this.image, 0, 0, this.self.width, this.self.height);
         context.drawImage(this.self, this.self.x, this.self.y);
@@ -272,17 +273,17 @@ Monster.prototype.move = function() {
 };
 // 切图
 Monster.prototype.cutImg = function() {
-    if (DF.M.cutImgTime === 0) {
-        var scale = DF.M.cutImgScale[DF.M.cutImgIndex];
-        this.context.translate(this.width, 0);
-        this.context.scale(-1, 1);
-        DF.M.cutImgTime = DF.M.cutImgTimeFinal;
-        DF.M.cutImgIndex++
-            if (DF.M.cutImgIndex >= 2) {
+    if (this.type === DF.M.types[1]) {
+        if (DF.M.cutImgTime === 0) {
+            this.image.src = 'images/' + this.type + DF.M.cutImgIndex + '.png';
+            DF.M.cutImgIndex++;
+            if (DF.M.cutImgIndex >= 3) {
                 DF.M.cutImgIndex = 0;
             }
+            DF.M.cutImgTime = DF.M.cutImgTimeFinal;
+        }
+        DF.M.cutImgTime--;
     }
-    DF.M.cutImgTime--;
 };
 //crash
 Monster.prototype.crash = function() {
@@ -304,9 +305,9 @@ Monster.prototype.crash = function() {
         });
     }
 };
-//========================================================================
-//======================== :: AsideMile :: ==================================
-//========================================================================
+//========================================================================//
+//======================== :: AsideMile :: ===============================//
+//========================================================================//
 // 创建
 var AsideMile = function(type, width, height, index) {
     this.self = document.createElement('canvas');

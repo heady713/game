@@ -13,7 +13,10 @@ var DF = {
         scale: 0.99,
         maxPathMile: 0,
         pathOffset4: 0.9,
-        scaleMile: 0.99
+        scaleMile: 0.99,
+        cutImgTimeFinal: 25,
+        cutImgTime: 25,
+        cutImgIndex: 0
     },
     P: {
         imgName: 'jiaose_s',
@@ -266,6 +269,20 @@ Monster.prototype.move = function() {
         this.width = this.width * DF.M.scale;
         this.height = this.height * DF.M.scale;
     }
+};
+// 切图
+Monster.prototype.cutImg = function() {
+    if (DF.M.cutImgTime === 0) {
+        var scale = DF.M.cutImgScale[DF.M.cutImgIndex];
+        this.context.translate(this.width, 0);
+        this.context.scale(-1, 1);
+        DF.M.cutImgTime = DF.M.cutImgTimeFinal;
+        DF.M.cutImgIndex++
+            if (DF.M.cutImgIndex >= 2) {
+                DF.M.cutImgIndex = 0;
+            }
+    }
+    DF.M.cutImgTime--;
 };
 //crash
 Monster.prototype.crash = function() {

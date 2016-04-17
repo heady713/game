@@ -14,10 +14,8 @@
         <section class="background" id="gameBefore">
             <div class="present">
             </div>
-            <div class="upBox">
-            </div>
             <div class="downBox">
-                <a class="btnStart" id="btnStart">
+                <a class="btn btn_l" id="btnStart">
                     立即开始
                 </a>
                 <div class="countInfo" id="countInfo">
@@ -29,9 +27,80 @@
                 </div>
             </div>
         </section>
-        <section class="background" id="gameing" style="display: none">
+        <section class="guide" id="guide">
+            <article>
+                左右滑动使角色左右移动
+                <br/>
+                上滑使角色跳起以躲避障碍
+            </article>
         </section>
-        <section class="background" id="gameAfter" style="display: none">
+        <section class="background" id="gameing" style="display: none">
+            <div class="scoreBox" id="scoreBox">
+                <aside class="timer" id="timer">
+                    00'0"
+                </aside>
+                <aside class="miles" id="miles">
+                    0m
+                </aside>
+                <h1 id="score">
+                    0
+                </h1>
+            </div>
+        </section>
+        <section class="gameAfter" id="gameAfter">
+            <div class="mask">
+            </div>
+            <div class="container self_center">
+                <div class="resultBox">
+                </div>
+                <p>
+                    您的成绩为：
+                    <span>
+                        100
+                    </span>
+                    <br/>
+                    成功击败了
+                    <span>
+                        100%
+                    </span>
+                    的对手
+                    <br/>
+                    最佳成绩：
+                    <span>
+                        100
+                    </span>
+                    <br/>
+                    最佳排名：
+                    <span>
+                        100
+                    </span>
+                    <br/>
+                </p>
+                <div class="downBox">
+                    <a class="btn btn_l">
+                        赶紧去抽奖
+                    </a>
+                    <a class="btn btn_m">
+                        排行榜
+                    </a>
+                    <a class="btn btn_m" id="btnReStart">
+                        再玩一次
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section class="dialog" id="dialog">
+            <div class="mask">
+            </div>
+            <div class="box">
+                <div class="header">
+                    <span class="close">
+                        X
+                    </span>
+                </div>
+                <div class="content">
+                </div>
+            </div>
         </section>
         <script src="js/zepto.min.js">
         </script>

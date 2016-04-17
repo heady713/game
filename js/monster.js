@@ -4,10 +4,11 @@
 var DF = {
     M: {
         types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
+        moveSpeed: 3,
         maxPath: 0,
-        pathOffset1: 0.6,
-        pathOffset2: 0.3,
-        pathOffset3: 0.8,
+        pathOffset1: 0.65,
+        pathOffset2: 0.1,
+        pathOffset3: 0.85,
         scale: 0.99,
         rotate: 1
     },
@@ -40,8 +41,12 @@ var Player = function() {
     this.image.height = this.height;
     this.image.src = 'images/Player.png';
     this.context = this.self.getContext('2d');
-    this.context.drawImage(this.image, 0, 0);
-    context.drawImage(this.self, this.self.x, this.self.y);
+    var tempPlarer = this;
+    this.image.onload = function() {
+        tempPlarer.context.drawImage(tempPlarer.image, 0, 0);
+        context.globalCompositeOperation = "source-over";
+        context.drawImage(tempPlarer.self, tempPlarer.self.x, tempPlarer.self.y);
+    };
     this.moving = false;
     this.moveDirect = 0;
     this.jumping = false;
@@ -139,7 +144,7 @@ var Monster = function(type, pathIndex, width, height, index) {
     this.context = this.self.getContext('2d');
     this.context.drawImage(this.image, 0, 0);
     context.drawImage(this.self, this.self.x, this.self.y);
-    this.speed = 3;
+    this.type = type;
     this.pathIndex = pathIndex;
     this.index = index;
     this.alive = true;
@@ -154,9 +159,9 @@ Monster.prototype.update = function(target) {
         context.globalCompositeOperation = "source-over";
         if (this.self.y - target.self.y < target.height && this.self.y - target.self.y > 0) {
             if (this.self.x > target.self.x && this.self.x - target.self.x < target.width) {
-                this.alive = false;
-            } else if (this.self.x < target.self.x && target.self.x - this.self.x < this.width) {
-                this.alive = false;
+                this.crash();
+            } else if (this.self.x < target.self.x && target.self.x - this.self.x < this.width / 2) {
+                this.crash();
             }
         }
     }
@@ -173,7 +178,7 @@ Monster.prototype.move = function() {
         case 1:
             this.self.x = this.self.x + DF.M.pathOffset1;
             break;
-        case 1:
+        case 2:
             this.self.x = this.self.x - DF.M.pathOffset2;
             break;
         case 3:
@@ -181,7 +186,7 @@ Monster.prototype.move = function() {
             break;
     }
     this.self.x += offset;
-    this.self.y -= this.speed;
+    this.self.y -= DF.M.moveSpeed;
     if (winHeight - this.self.y > DF.M.maxPath) {
         this.self.x = this.x;
         this.self.y = this.y;
@@ -194,5 +199,25 @@ Monster.prototype.move = function() {
         context.drawImage(this.self, this.self.x, this.self.y);
         this.width = this.width * DF.M.scale;
         this.height = this.height * DF.M.scale;
+    }
+};
+//crash
+Monster.prototype.crash = function() {
+    this.alive = false;
+    delete monsters[this.index];
+    if (this.type === 'Coin') {
+        dialog({
+            content: 'GIVE ME FIVE!',
+            mask: true,
+            min: true,
+            delay: 2000
+        });
+    } else {
+        dialog({
+            content: 'YOU HURT!',
+            mask: true,
+            min: true,
+            delay: 2000
+        });
     }
 };

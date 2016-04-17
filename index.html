@@ -8,6 +8,7 @@
         <title>
             疯狂追族
         </title>
+        <link href="css/weui.min.css" rel="stylesheet"/>
         <link href="css/style.css" rel="stylesheet"/>
     </head>
     <body>
@@ -113,7 +114,7 @@
                                 </input>
                             </div>
                         </div>
-                        <a class="btn btn_l">
+                        <a class="btn btn_l" id="submitInfo">
                             提交
                         </a>
                     </div>
@@ -133,6 +134,25 @@
                 </div>
             </div>
         </section>
+        <!--BEGIN toast-->
+        <div id="toastSuccess" style="display: none;">
+            <div class="weui_mask_transparent"></div>
+            <div class="weui_toast">
+                <i class="weui_icon_toast"></i>
+                <p class="weui_toast_content">已完成</p>
+            </div>
+        </div>
+        <!--end toast-->
+        <!--BEGIN toast-->
+        <div id="toastError" style="display: none;">
+            <div class="weui_mask_transparent"></div>
+            <div class="weui_toast">
+                <i class="weui_icon_msg weui_icon_warn"></i>
+                <p class="weui_toast_content">已完成</p>
+            </div>
+        </div>
+        <!--end toast-->
+
         <script src="js/zepto.min.js">
         </script>
         <script src="js/touch.min.js">

@@ -1,3 +1,6 @@
+//========================================================================//
+//============================= :: INIT :: ===============================//
+//========================================================================//
 var canvasContainer, canvas, context;
 var player, shadow, monsters = [],
     asideMiles = [];
@@ -16,7 +19,7 @@ $(function() {
     $('body').on('touchmove touchstart', function(event) {
         event.preventDefault();
     });
-    $('input').on('touchmove touchstart', function(event) {
+    $('input').on('touchstart', function(event) {
         $(this).focus();
     });
     $('.dialog').on('touchstart', '.close', function(event) {
@@ -29,6 +32,9 @@ $(function() {
         resetStage(); //重置舞台
         startGame();
         stopPropagation(event);
+    }).on('touchstart', '#submitInfo', function(event) {
+        submitInfo();
+        event.preventDefault();
     });
 });
 //引导页
@@ -106,6 +112,9 @@ var resetStage = function() {
     shadow = new Shadow();
     player = new Player();
 };
+//========================================================================//
+//============================= :: MAIN :: ===============================//
+//========================================================================//
 // 主函数
 window.requestAnimationFrame = window.__requestAnimationFrame ||
     //
@@ -182,6 +191,9 @@ var renderAsideMile = function() {
         asideMiles[key].update(player);
     }
 };
+//========================================================================//
+//============================= :: UTIL :: ===============================//
+//========================================================================//
 // 获取随机数
 var getRoundVal = function(base, round) {
     return (Math.round(Math.random() * round) + base);
@@ -230,4 +242,101 @@ var dialog = function(options) {
             dialog.hide();
         }, options.delay)
     }
+};
+//========================================================================//
+//============================= :: AJAX :: ===============================//
+//========================================================================//
+var service = 'http://ijita.me/game/';
+var executeAjax = function(opt) {
+    $.ajax({
+        url: opt.url,
+        dataType: 'json',
+        type: opt.method ? opt.method : 'POST',
+        data: opt.data,
+        success: opt.success,
+        error: function(xhr, type) {
+            dialog({
+                content: 'SERVICES ERROR!',
+                mask: true
+            });
+        }
+    });
+};
+var checkPassport = function() {
+    executeAjax({
+        url: service + 'check.php',
+        data: {
+            passport: '123456'
+        },
+        success: function(data) {
+            if (data && data.ret === 0) {}
+        }
+    });
+};
+var loadPlayerCnt = function() {
+    executeAjax({
+        url: service + 'pcnt.php',
+        method: 'GET',
+        success: function(data) {
+            if (data && data.ret === 0) {
+                console.log(data.cnt);
+            }
+        }
+    });
+};
+var finishGame = function() {
+    executeAjax({
+        url: service + 'finish.php',
+        data: {
+            total_time: 123,
+            gmf_times: 5,
+            uid: null
+        },
+        success: function(data) {
+            if (data && data.ret === 0) {
+                console.log(data.total_time);
+                console.log(data.gmf_times);
+                console.log(data.uid);
+                console.log(data.rank_id);
+            }
+        }
+    });
+};
+var submitInfo = function() {
+    var phone = $('#phone').val();
+    var userName = $('#userName').val();
+    if (phone === '' || phone.length != 11) {
+        dialog({
+            content: '请填写用户信息！',
+            mask: true,
+            min: true,
+            delay: 2000
+        });
+        return false;
+    }
+    if (userName === '') {
+        dialog({
+            content: '请填写用户信息！',
+            mask: true,
+            min: true,
+            delay: 2000
+        });
+        return false;
+    }
+    executeAjax({
+        url: service + 'finish.php',
+        data: {
+            uid: 1,
+            phone_no: phone,
+            name: userName
+        },
+        success: function(data) {
+            if (data && data.ret === 0) {
+                $('#toast').show();
+                setTimeout(function() {
+                    $('#toast').hide();
+                }, 2000);
+            }
+        }
+    });
 };

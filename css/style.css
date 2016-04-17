@@ -195,7 +195,7 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: 2;
-    display: none;
+    display: block;
 }
 
 .gameAfter .mask {
@@ -292,16 +292,17 @@ html, body {
     -webkit-flex: 1;
     -ms-flex: 1;
     flex: 1;
+    border-radius: 5px;
+    background: #fff;
+    padding: 2px;
 }
 
 .weui_input {
     width: 100%;
     border: 0;
     outline: 0;
-    -webkit-appearance: none;
-    background-color: transparent;
     font-size: inherit;
-    color: inherit;
+    color: #333;
     height: 1.41176471em;
     line-height: 1.41176471;
 }

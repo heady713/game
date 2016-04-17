@@ -16,6 +16,9 @@ $(function() {
     $('body').on('touchmove touchstart', function(event) {
         event.preventDefault();
     });
+    $('input').on('touchmove touchstart', function(event) {
+        $(this).focus();
+    });
     $('.dialog').on('touchstart', '.close', function(event) {
         $(this).closest('.dialog').hide();
         event.preventDefault();

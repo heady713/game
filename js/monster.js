@@ -14,21 +14,21 @@ var DF = {
         maxPathMile: 0,
         pathOffset4: 0.9,
         scaleMile: 0.99,
-        cutImgTimeFinal: 25,
-        cutImgTime: 25,
+        cutImgTimeFinal: 10,
+        cutImgTime: 10,
         cutImgIndex: 0
     },
     P: {
         imgName: 'jiaose_s',
         pathWidth: 65,
-        moveSpeed: 2,
-        jumpSpeedFinal: 5,
+        moveSpeed: 4,
+        jumpSpeedFinal: 6,
         jumpSpeed: 5,
-        gravity: 0.2,
+        gravity: 0.25,
         cutImgTimeFinal: 25,
         cutImgTime: 25
     },
-    Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95']
+    Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
 };
 //========================================================================
 //======================== :: Player :: ==================================
@@ -262,6 +262,7 @@ Monster.prototype.move = function() {
         this.alive = false;
         delete monsters[this.index];
     } else {
+        this.cutImg();
         this.context.clearRect(0, 0, this.self.width, this.self.height);
         this.context.scale(DF.M.scale, DF.M.scale);
         this.context.drawImage(this.image, 0, 0, this.self.width, this.self.height);
@@ -272,17 +273,17 @@ Monster.prototype.move = function() {
 };
 // 切图
 Monster.prototype.cutImg = function() {
-    if (DF.M.cutImgTime === 0) {
-        var scale = DF.M.cutImgScale[DF.M.cutImgIndex];
-        this.context.translate(this.width, 0);
-        this.context.scale(-1, 1);
-        DF.M.cutImgTime = DF.M.cutImgTimeFinal;
-        DF.M.cutImgIndex++
-            if (DF.M.cutImgIndex >= 2) {
+    if (this.type === DF.M.types[1]) {
+        if (DF.M.cutImgTime === 0) {
+            this.image.src = 'images/' + this.type + DF.M.cutImgIndex + '.png';
+            DF.M.cutImgIndex++;
+            if (DF.M.cutImgIndex >= 3) {
                 DF.M.cutImgIndex = 0;
             }
+            DF.M.cutImgTime = DF.M.cutImgTimeFinal;
+        }
+        DF.M.cutImgTime--;
     }
-    DF.M.cutImgTime--;
 };
 //crash
 Monster.prototype.crash = function() {

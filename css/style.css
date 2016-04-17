@@ -45,6 +45,7 @@ html, body {
     width: 60px;
     height: 60px;
     background: #474747;
+    display: none;
 }
 
 .background .downBox {
@@ -89,13 +90,14 @@ html, body {
 }
 
 .background .scoreBox .timer {
-    left: 0px;
+    right: 0px;
     color: #ff0000;
 }
 
 .background .scoreBox .miles {
-    right: 0px;
+    left: 0px;
     color: #7acc5a;
+    display: none;
 }
 
 .background .scoreBox h1 {
@@ -103,6 +105,7 @@ html, body {
     text-align: center;
     width: 100%;
     color: #fff;
+    display: none;
 }
 
 
@@ -192,7 +195,7 @@ html, body {
     width: 100%;
     height: 100%;
     z-index: 2;
-    display: block;
+    display: none;
 }
 
 .gameAfter .mask {
@@ -202,7 +205,7 @@ html, body {
 .gameAfter .container {
     position: absolute;
     width: 250px;
-    height: 86%;
+    height: 90%;
     text-align: center;
 }
 
@@ -213,38 +216,41 @@ html, body {
 }
 
 .gameAfter .container p {
-    font: normal 1.1em/1.8em 'Microsoft Yahei', Arial, sans-serif;
+    font: normal 1em/1.8em 'Microsoft Yahei', Arial, sans-serif;
     color: #fff;
 }
 
 .gameAfter .container p span {
-    font-size: 1.2em;
+    font-size: 1em;
 }
 
 .gameAfter .container .downBox {
     position: relative;
     text-align: left;
+    width: 200px;
+    margin: 0px 25px;
 }
 
 .btn {
-    height: 40px;
-    line-height: 38px;
+    height: 30px;
+    line-height: 29px;
     color: #fff;
-    font-size: 1.4em;
+    font-size: 1em;
     text-align: center;
     background: #E67422;
     display: inline-block;
-    border-radius: 7px;
-    margin: 10px 0 0 10px;
+    border-radius: 5px;
+    letter-spacing: 3px;
+    margin: 10px 0px 0px 10px;
 }
 
 .btn_l {
-    width: 230px;
+    width: 190px;
     background: #FE8208;
 }
 
 .btn_m {
-    width: 108px;
+    width: 86px;
     background: #41BD43;
 }
 

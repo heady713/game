@@ -263,7 +263,7 @@ Monster.prototype.move = function() {
         delete monsters[this.index];
     } else {
         this.cutImg();
-        this.context.clearRect(0, 0, this.self.width, this.self.height);
+        this.context.clearRect(0, 0, this.self.width + 1, this.self.height + 1);
         this.context.scale(DF.M.scale, DF.M.scale);
         this.context.drawImage(this.image, 0, 0, this.self.width, this.self.height);
         context.drawImage(this.self, this.self.x, this.self.y);

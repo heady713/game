@@ -152,6 +152,10 @@ html, body {
     color: #fff;
 }
 
+.dialog .content .warn{
+
+}
+
 
 /*======================::guide::=======================*/
 
@@ -276,6 +280,10 @@ html, body {
     -ms-flex-align: center;
     align-items: center;
     color: #fff;
+}
+
+.weui_cell:before {
+    border-width: 0px;
 }
 
 .weui_cell_hd {

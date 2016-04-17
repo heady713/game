@@ -21,10 +21,10 @@ var DF = {
     P: {
         imgName: 'jiaose_s',
         pathWidth: 65,
-        moveSpeed: 2,
-        jumpSpeedFinal: 5,
+        moveSpeed: 4,
+        jumpSpeedFinal: 6,
         jumpSpeed: 5,
-        gravity: 0.2,
+        gravity: 0.25,
         cutImgTimeFinal: 25,
         cutImgTime: 25
     },

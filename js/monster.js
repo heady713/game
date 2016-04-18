@@ -14,8 +14,8 @@ var DF = {
         maxPathMile: 0,
         pathOffset4: 0.9,
         scaleMile: 0.99,
-        cutImgTimeFinal: 10,
-        cutImgTime: 10,
+        cutImgTimeFinal: 15,
+        cutImgTime: 15,
         cutImgIndex: 0
     },
     P: {
@@ -130,6 +130,17 @@ Player.prototype.move = function() {
         this.moving = false;
     }
 };
+//受伤
+Player.prototype.hurting = function() {
+    this.hurt = true;
+    var target = this;
+    this.fillStyle = '#E12323';
+    this.context.fillRect(0, 0, this.self.width, this.self.width);
+    context.drawImage(this.self, this.self.x, this.self.y);
+    setTimeout(function() {
+        target.hurt = false;
+    }, 2000);
+};
 //========================================================================//
 //======================== :: Shadow :: ==================================//
 //========================================================================//
@@ -206,12 +217,17 @@ var Monster = function(type, pathIndex, width, height, index) {
     var gap = (winWidth - 3 * this.width) / 4;
     this.self.x = this.x = gap * pathIndex + this.width * (pathIndex - 1);
     this.self.y = this.y = winHeight - this.height;
-    this.image = new Image();
-    this.image.width = this.width;
-    this.image.height = this.height;
-    this.image.src = 'images/' + type + '.png';
+    this.images = [];
+    var imageLength = type === DF.M.types[1] ? 4 : 1;
+    for (var i = 0; i < imageLength; i++) {
+        var image = new Image();
+        image.width = this.width;
+        image.height = this.height;
+        image.src = 'images/' + type + i + '.png';
+        this.images.push(image);
+    }
     this.context = this.self.getContext('2d');
-    this.context.drawImage(this.image, 0, 0);
+    this.context.drawImage(this.images[0], 0, 0);
     context.drawImage(this.self, this.self.x, this.self.y);
     this.type = type;
     this.pathIndex = pathIndex;
@@ -262,10 +278,10 @@ Monster.prototype.move = function() {
         this.alive = false;
         delete monsters[this.index];
     } else {
-        this.cutImg();
         this.context.clearRect(0, 0, this.self.width + 1, this.self.height + 1);
         this.context.scale(DF.M.scale, DF.M.scale);
-        this.context.drawImage(this.image, 0, 0, this.self.width, this.self.height);
+        var image = this.cutImg();
+        this.context.drawImage(image, 0, 0, this.self.width, this.self.height);
         context.drawImage(this.self, this.self.x, this.self.y);
         this.width = this.width * DF.M.scale;
         this.height = this.height * DF.M.scale;
@@ -275,7 +291,6 @@ Monster.prototype.move = function() {
 Monster.prototype.cutImg = function() {
     if (this.type === DF.M.types[1]) {
         if (DF.M.cutImgTime === 0) {
-            this.image.src = 'images/' + this.type + DF.M.cutImgIndex + '.png';
             DF.M.cutImgIndex++;
             if (DF.M.cutImgIndex >= 3) {
                 DF.M.cutImgIndex = 0;
@@ -283,6 +298,9 @@ Monster.prototype.cutImg = function() {
             DF.M.cutImgTime = DF.M.cutImgTimeFinal;
         }
         DF.M.cutImgTime--;
+        return this.images[DF.M.cutImgIndex];
+    } else {
+        return this.images[0];
     }
 };
 //crash
@@ -297,6 +315,7 @@ Monster.prototype.crash = function() {
             delay: 2000
         });
     } else {
+        player.hurting();
         dialog({
             content: 'YOU HURT!',
             mask: true,

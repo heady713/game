@@ -138,12 +138,14 @@ var loop = function() {
     }
     document.getElementById('timer').innerText = formatMilli(runingTime);
     //document.getElementById('miles').innerText = formatMiles(runingTime);
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    if (isContinue) {
-        player.update();
-        shadow.update();
-        renderMonster();
-        renderAsideMile();
+    if (isContinue) {;
+        if (!player.hurt) {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            shadow.update();
+            player.update()
+            renderMonster();
+            renderAsideMile();
+        }
         requestAnimationFrame(loop);
     } else {
         $('#gameAfter').show();

@@ -248,13 +248,18 @@ var Monster = function(type, pathIndex, width, height, index) {
 };
 //更新位置
 Monster.prototype.update = function(target) {
+
     if (target.jumping) {
         if (this.self.y - target.self.y < target.height) {
             context.globalCompositeOperation = "destination-over";
         }
     } else {
-        context.globalCompositeOperation = "source-over";
-        if (this.self.y - target.self.y < target.height && this.self.y - target.self.y > 0) {
+        if (this.self.y + this.height < target.self.y) {
+            context.globalCompositeOperation = "source-over";    
+        } else {
+            context.globalCompositeOperation = "destination-over";
+        }
+        if (this.self.y - target.self.y < target.height && this.self.y - target.self.y > (target.height-0.5*this.self.height)) {
             if (this.self.x > target.self.x && this.self.x - target.self.x < target.width) {
                 this.crash();
             } else if (this.self.x < target.self.x && target.self.x - this.self.x < this.width / 2) {

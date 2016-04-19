@@ -26,7 +26,10 @@ var DF = {
         jumpSpeed: 5,
         gravity: 0.25,
         cutImgTimeFinal: 25,
-        cutImgTime: 25
+        cutImgTime: 25,
+        cutHurtTimeFinal: 25,
+        cutHurtTime: 25,
+        cutHurtIndex: 0
     },
     Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
 };
@@ -134,12 +137,21 @@ Player.prototype.move = function() {
 Player.prototype.hurting = function() {
     this.hurt = true;
     var target = this;
-    this.fillStyle = '#E12323';
-    this.context.fillRect(0, 0, this.self.width, this.self.width);
-    context.drawImage(this.self, this.self.x, this.self.y);
     setTimeout(function() {
         target.hurt = false;
-    }, 2000);
+    }, 1000);
+};
+//受伤效果
+Player.prototype.hurtUpdate = function() {
+    if (DF.P.cutHurtTime === 0) {
+        if (DF.P.cutHurtIndex === 0) {
+            DF.P.cutHurtIndex = 1;
+        } else {
+            DF.P.cutHurtIndex = 0;
+        }
+        DF.P.cutHurtTime = DF.P.cutImgTimeFinal;
+    }
+    DF.P.cutHurtTime--;
 };
 //========================================================================//
 //======================== :: Shadow :: ==================================//
@@ -308,20 +320,21 @@ Monster.prototype.crash = function() {
     this.alive = false;
     delete monsters[this.index];
     if (this.type === DF.M.types[0]) {
-        dialog({
-            content: 'GIVE ME FIVE!',
-            mask: true,
-            min: true,
-            delay: 2000
-        });
+        // dialog({
+        //     content: 'GIVE ME FIVE!',
+        //     mask: true,
+        //     min: true,
+        //     delay: 2000
+        // });
+        gmfCounts++;
     } else {
         player.hurting();
-        dialog({
-            content: 'YOU HURT!',
-            mask: true,
-            min: true,
-            delay: 2000
-        });
+        // dialog({
+        //     content: 'YOU HURT!',
+        //     mask: true,
+        //     min: true,
+        //     delay: 2000
+        // });
     }
 };
 //========================================================================//

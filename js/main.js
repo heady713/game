@@ -1,3 +1,10 @@
+var isWeixinBrowser = function() {
+    var ua = navigator.userAgent.toLowerCase();
+    return (/micromessenger/.test(ua)) ? true : false;
+}
+if (!isWeixinBrowser()) {
+    //$('body').html('');
+}
 //========================================================================//
 //============================= :: INIT :: ===============================//
 //========================================================================//
@@ -7,16 +14,24 @@ var player, shadow, monsters = [],
 var winWidth, winHeight, isGuide = false;
 var startTouchPoint, touchCache = 0.2;
 var startTime, countDown = 60000,
-    refreshDelay = 24;
+    refreshDelay = 24,
+    gmfCounts = 0;
 // 初始化页面
 $(function() {
+    loadPlayerCnt();
+    $('#submitPwd').on('touchstart', function() {
+        var pwd = $('#password').val();
+        if (pwd && pwd.length > 0) {
+            checkPassport(pwd);
+        }
+    });
     $('#gameBefore').on('touchstart', '#btnStart', function(event) {
         $('#gameBefore').hide();
         $('#gameing').show();
         initStage();
         stopPropagation(event);
     });
-    $('body').on('touchmove touchstart', function(event) {
+    $('body').on('touchstart touchmove', function(event) {
         event.preventDefault();
     });
     $('input').on('touchstart', function(event) {
@@ -132,12 +147,12 @@ var loop = function() {
     currTime = new Date().getTime();
     var runingTime = currTime - startTime;
     var isContinue = true;
-    if (mileIndex >= 20) {
+    if (mileIndex >= 19) {
         mileIndex = 0;
         isContinue = false;
     }
     document.getElementById('timer').innerText = formatMilli(runingTime);
-    //document.getElementById('miles').innerText = formatMiles(runingTime);
+    document.getElementById('miles').innerText = 'GMF: ' + gmfCounts;
     if (isContinue) {;
         if (!player.hurt) {
             context.clearRect(0, 0, canvas.width, canvas.height);
@@ -145,10 +160,12 @@ var loop = function() {
             player.update()
             renderMonster();
             renderAsideMile();
+        } else {
+            player.hurtUpdate();
         }
         requestAnimationFrame(loop);
     } else {
-        $('#gameAfter').show();
+        finishGame((runingTime / 1000).toFixed(1), gmfCounts);
     }
 };
 var nextMonster = false,
@@ -184,7 +201,7 @@ var renderAsideMile = function() {
         mileIndex++;
     }
     if (!nextAsideMile) {
-        nextMileTime = currTime + 3000;
+        nextMileTime = currTime + 1500;
         var temp = new AsideMile(DF.Miles[mileIndex], 100, 100, mileIndex);
         asideMiles[mileIndex] = temp;
         nextAsideMile = true;
@@ -237,6 +254,9 @@ var dialog = function(options) {
     } else {
         dialog.find('.mask').hide();
     }
+    if (!options.hasClose) {
+        dialog.css('background-image', 'url(' + options.bgImg + ')');
+    }
     dialog.find('.content').html(options.content);
     dialog.show()
     if (options.delay) {
@@ -248,7 +268,8 @@ var dialog = function(options) {
 //========================================================================//
 //============================= :: AJAX :: ===============================//
 //========================================================================//
-var service = 'http://ijita.me/game/';
+//var service = 'http://ijita.me/game/';
+var service = 'http://localhost:12306/game/server/';
 var executeAjax = function(opt) {
     $.ajax({
         url: opt.url,
@@ -264,52 +285,65 @@ var executeAjax = function(opt) {
         }
     });
 };
-var checkPassport = function() {
+//检测授权码
+var checkPassport = function(passport) {
     executeAjax({
         url: service + 'check.php',
         data: {
-            passport: '123456'
+            passport: passport
         },
         success: function(data) {
-            if (data && data.ret === 0) {}
+            // data = data ? $.parseJSON(data) : null;
+            if (data && data.ret === 0) {
+                $('#checkPassport').hide();
+            }
         }
     });
 };
+//加载玩家数
 var loadPlayerCnt = function() {
     executeAjax({
         url: service + 'pcnt.php',
         method: 'GET',
         success: function(data) {
+            // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
-                console.log(data.cnt);
+                $('#playerCount').text(data.cnt);
             }
         }
     });
 };
-var finishGame = function() {
+// 游戏结束
+var finishGame = function(timeCount, gmfCount) {
+    var uid = $.fn.cookie('uid');
     executeAjax({
         url: service + 'finish.php',
         data: {
-            total_time: 123,
-            gmf_times: 5,
-            uid: null
+            total_time: timeCount,
+            gmf_times: gmfCount,
+            uid: uid
         },
         success: function(data) {
+            // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
-                console.log(data.total_time);
-                console.log(data.gmf_times);
-                console.log(data.uid);
-                console.log(data.rank_id);
+                $.fn.cookie('uid', data.uid, {
+                    expires: 7
+                });
+                document.getElementById('timeCount').innerText = formatMilli(timeCount);
+                document.getElementById('gmfCount').innerText = gmfCount;
+                document.getElementById('currentRank').innerText = data.rank_id;
+                $('#gameAfter').show();
             }
         }
     });
 };
+// 提交信息
 var submitInfo = function() {
     var phone = $('#phone').val();
     var userName = $('#userName').val();
     if (phone === '' || phone.length != 11) {
         dialog({
-            content: '请填写用户信息！',
+            content: '请填写您的信息以便我们能联系到您！',
             mask: true,
             min: true,
             delay: 2000
@@ -318,25 +352,27 @@ var submitInfo = function() {
     }
     if (userName === '') {
         dialog({
-            content: '请填写用户信息！',
+            content: '请填写您的信息以便我们能联系到您！',
             mask: true,
             min: true,
             delay: 2000
         });
         return false;
     }
+    var uid = $.fn.cookie('uid');
     executeAjax({
-        url: service + 'finish.php',
+        url: service + 'info.php',
         data: {
-            uid: 1,
+            uid: uid,
             phone_no: phone,
             name: userName
         },
         success: function(data) {
+            // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
-                $('#toast').show();
+                $('#toastSuccess').show();
                 setTimeout(function() {
-                    $('#toast').hide();
+                    $('#toastSuccess').hide();
                 }, 2000);
             }
         }

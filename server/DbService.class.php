@@ -24,9 +24,11 @@ class DbService {
 			'database_type' => 'mysql',
 			'database_name' => 'game_12306',
 			'server' => 'localhost',
+			//'server' => '192.168.253.2',
 			'username' => 'root',
-			// 'password' => 'admin',
-			'password' => 'ZQH4996197!=',
+			//'password' => 'tydic2016',
+			'password' => 'mysql',
+			//'password' => 'ZQH4996197!=',
 			'charset' => 'utf8',
 			
 			// [optional]

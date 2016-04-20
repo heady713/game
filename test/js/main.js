@@ -24,6 +24,10 @@ CANVAS.Point.prototype.toString = function() {
 	return "{x:" + this.x + " , y:" + this.y + "}";
 };
 
+CANVAS.Point.prototype.getDistance = function(point) {
+	return Math.sqrt(Math.pow(point.x - this.x, 2), Math.pow(point.y - this.y, 2))
+};
+
 // ===================================================
 // =====================::Sprite::====================
 // ===================================================

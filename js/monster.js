@@ -239,11 +239,11 @@ function k(x, y, idx) {
     var p1_x = 0;
     switch(idx) {
         case 1:
-            p1_x = xd1;
+            p1_x = getScaleX(xd1);
         case 2:
-            p1_x = 360;
+            p1_x = getScaleX(360);
         case 3:
-            p1_x = xd2;
+            p1_x = getScaleX(xd2);
     }
     var p1_y = y1;
     return (x - p1_x)/(y - p1_y);
@@ -346,15 +346,15 @@ Monster.prototype.move = function() {
             case 1:
                 center_x = center_x + this.width * (1- DF.M.scale);
                 this.setCenterX(center_x);
-                center_y = center_y - this.height * (1- DF.M.scale);
+                center_y = center_y + this.height * (1- DF.M.scale);
                 this.setCenterY(center_y);
                 break;
             case 2:
                 break;
             case 3:
-                center_x = center_x - this.width * (1- DF.M.scale);
+                center_x = center_x + this.width * (1- DF.M.scale);
                 this.setCenterX(center_x);
-                center_y = center_y - this.height * (1- DF.M.scale);
+                center_y = center_y + this.height * (1- DF.M.scale);
                 this.setCenterY(center_y);
                 break;
         }

@@ -19,7 +19,7 @@ var startTime, countDown = 60000,
 var stepLength = 2000;
 // 初始化页面
 $(function() {
-    loadPlayerCnt();
+    //loadPlayerCnt();
     $('#submitPwd').on('touchstart', function() {
         var pwd = $('#password').val();
         if (pwd && pwd.length > 0) {
@@ -336,7 +336,7 @@ var finishGame = function(timeCount, gmfCount) {
                 document.getElementById('timeCount').innerText = formatMilli(timeCount);
                 document.getElementById('gmfCount').innerText = gmfCount;
                 document.getElementById('currentRank').innerText = data.rank_id;
-                document.getElementById('currentPersent').innerText = Math.round((data.pcnt-data.rank_id)/(data.pcnt)*100);
+                document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id) / (data.pcnt) * 100);
                 $('#gameAfter').show();
             }
         }

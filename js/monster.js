@@ -10,7 +10,7 @@ var DF = {
         pathOffset1: 0.4,
         pathOffset2: 0.24,
         pathOffset3: 0.86,
-        scale: 0.99,
+        scale: 0.999,
         maxPathMile: 0,
         pathOffset4: 0.9,
         scaleMile: 0.99,
@@ -41,8 +41,11 @@ var Player = function() {
     this.self = document.createElement('canvas');
     this.self.width = this.width = 56;
     this.self.height = this.height = 122;
-    this.self.x = this.x = (winWidth - this.width) / 2;
-    this.self.y = this.y = winHeight - DF.M.maxPath / 5 * 4;
+    //设置中心点
+    this.setCenterX(winWidth / 2);
+    this.setCenterY(winHeight - DF.M.maxPath / 5 * 4);
+    this.lastX = this.centerX;
+    this.lastY = this.centerY;
     this.image = new Image();
     this.image.width = this.width;
     this.image.height = this.height;
@@ -61,9 +64,17 @@ var Player = function() {
     this.hurt = false;
     this.pathIndex = 2;
     this.center = {
-        x: this.x,
-        y: this.y
+        x: this.lastX,
+        y: this.lastY
     };
+};
+Player.prototype.setCenterX = function(x) {
+    this.centerX = x;
+    this.self.x = x - 1 / 2 * this.width;
+};
+Player.prototype.setCenterY = function(y) {
+    this.centerY = y;
+    this.self.y = y - 1 / 2 * this.height;
 };
 // 更新位置
 Player.prototype.update = function() {
@@ -94,41 +105,41 @@ Player.prototype.cutImg = function() {
 // Jump
 Player.prototype.jump = function() {
     if (this.jumpDirect == 1) {
-        this.self.y -= DF.P.jumpSpeed;
+        this.setCenterY(this.centerY - DF.P.jumpSpeed);
         DF.P.jumpSpeed -= DF.P.gravity;
         if (DF.P.jumpSpeed <= 0) {
             this.jumpDirect = -1;
         }
     } else if (this.jumpDirect == -1) {
         DF.P.jumpSpeed += DF.P.gravity;
-        this.self.y += DF.P.jumpSpeed;
+        this.setCenterY(this.centerY + DF.P.jumpSpeed);
         if (DF.P.jumpSpeed >= DF.P.jumpSpeedFinal) {
             this.jumpDirect = 0;
         }
     } else {
         this.jumping = false;
         DF.P.jumpSpeed = DF.P.jumpSpeedFinal;
-        this.self.y = this.y;
+        this.setCenterY(this.lastY);
     }
 };
 // Move
 Player.prototype.move = function() {
-    if (Math.abs(this.self.x - this.x) >= DF.P.pathWidth) {
+    if (Math.abs(this.centerX - this.lastX) >= DF.P.pathWidth) {
         this.moveDirect = 0;
         this.moving = false;
-        this.x = this.self.x;
-        if (this.x < this.center.x) {
+        this.lastX = this.centerX;
+        if (this.lastX < this.center.x) {
             this.pathIndex = 1;
-        } else if (this.x > this.center.x) {
+        } else if (this.lastX > this.center.x) {
             this.pathIndex = 3;
         } else {
             this.pathIndex = 2;
         }
     }
     if (this.moveDirect > 0 && this.pathIndex < 3) {
-        this.self.x = this.self.x + DF.P.moveSpeed;
+        this.setCenterX(this.centerX + DF.P.moveSpeed);
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
-        this.self.x = this.self.x - DF.P.moveSpeed;
+        this.setCenterX(this.centerX - DF.P.moveSpeed);
     } else {
         this.moving = false;
     }
@@ -159,31 +170,39 @@ Player.prototype.hurtUpdate = function() {
 // 创建
 var Shadow = function() {
     this.self = document.createElement('canvas');
-    this.self.width = this.width = 100;
-    this.self.height = this.height = 96;
-    this.self.x = this.x = (winWidth - this.width) / 2 + 16;
-    this.self.y = this.y = winHeight - DF.M.maxPath / 5 * 4 + 90;
+    this.self.width = this.width = 70;
+    this.self.height = this.height = 67;
+    //设置中心点
+    this.setCenterX(winWidth / 2);
+    this.setCenterY(winHeight - DF.M.maxPath / 5 * 4 + 67);
+    this.lastX = this.centerX;
+    this.lastY = this.centerY;
     this.image = new Image();
     this.image.width = this.width;
     this.image.height = this.height;
     this.image.src = 'images/shadow.png';
     this.context = this.self.getContext('2d');
-    var tempPlarer = this;
+    var temp = this;
     this.image.onload = function() {
-        tempPlarer.context.drawImage(tempPlarer.image, 0, 0);
+        temp.context.drawImage(temp.image, 0, 0);
         context.globalCompositeOperation = "lighter";
-        context.drawImage(tempPlarer.self, tempPlarer.self.x, tempPlarer.self.y);
+        context.drawImage(temp.self, temp.self.x, temp.self.y);
     };
     this.moving = false;
     this.moveDirect = 0;
-    this.jumping = false;
-    this.jumpDirect = 0;
-    this.hurt = false;
     this.pathIndex = 2;
     this.center = {
-        x: this.x,
-        y: this.y
+        x: this.lastX,
+        y: this.lastY
     };
+};
+Shadow.prototype.setCenterX = function(x) {
+    this.centerX = x;
+    this.self.x = x - 1 / 2 * this.width;
+};
+Shadow.prototype.setCenterY = function(y) {
+    this.centerY = y;
+    this.self.y = y - 1 / 2 * this.height;
 };
 // 更新位置
 Shadow.prototype.update = function() {
@@ -198,26 +217,58 @@ Shadow.prototype.update = function() {
 };
 // Move
 Shadow.prototype.move = function() {
-    if (Math.abs(this.self.x - this.x) >= DF.P.pathWidth) {
+    if (Math.abs(this.centerX - this.lastX) >= DF.P.pathWidth) {
         this.moveDirect = 0;
         this.moving = false;
-        this.x = this.self.x;
-        if (this.x < this.center.x) {
+        this.lastX = this.centerX;
+        if (this.lastX < this.center.x) {
             this.pathIndex = 1;
-        } else if (this.x > this.center.x) {
+        } else if (this.lastX > this.center.x) {
             this.pathIndex = 3;
         } else {
             this.pathIndex = 2;
         }
     }
     if (this.moveDirect > 0 && this.pathIndex < 3) {
-        this.self.x = this.self.x + DF.P.moveSpeed;
+        this.setCenterX(this.centerX + DF.P.moveSpeed);
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
-        this.self.x = this.self.x - DF.P.moveSpeed;
+        this.setCenterX(this.centerX - DF.P.moveSpeed);
     } else {
         this.moving = false;
     }
 };
+var WIDTH = 720,
+    HEIGHT = 1280;
+var xl = 292,
+    yl = 308,
+    xr = 435;
+var xd1 = 128,
+    xd2 = 592;
+
+function getScaleX(x) {
+    return winWidth * x / WIDTH;
+}
+
+function getScaleY(y) {
+    return winHeight * y / HEIGHT;
+}
+
+function k(x, y, idx) {
+    var x1 = getScaleX(xl);
+    var x2 = getScaleX(xr);
+    var y1 = getScaleY(yl);
+    var p1_x = 0;
+    switch (idx) {
+        case 1:
+            p1_x = getScaleX(xd1);
+        case 2:
+            p1_x = getScaleX(360);
+        case 3:
+            p1_x = getScaleX(xd2);
+    }
+    var p1_y = y1;
+    return (x - p1_x) / (y - p1_y);
+}
 //========================================================================//
 //======================== :: Monster :: =================================//
 //========================================================================//
@@ -226,9 +277,8 @@ var Monster = function(type, pathIndex, width, height, index) {
     this.self = document.createElement('canvas');
     this.self.width = this.width = width;
     this.self.height = this.height = height;
-    var gap = (winWidth - 3 * this.width) / 4;
-    this.self.x = this.x = gap * pathIndex + this.width * (pathIndex - 1);
-    this.self.y = this.y = winHeight - this.height;
+    this.setCenterX(winWidth / 6 * (2 * pathIndex - 1));
+    this.setCenterY(winHeight);
     this.images = [];
     var imageLength = type === DF.M.types[1] ? 4 : 1;
     for (var i = 0; i < imageLength; i++) {
@@ -246,6 +296,14 @@ var Monster = function(type, pathIndex, width, height, index) {
     this.index = index;
     this.alive = true;
 };
+Monster.prototype.setCenterX = function(x) {
+    this.centerX = x;
+    this.self.x = x - 1 / 2 * this.width;
+};
+Monster.prototype.setCenterY = function(y) {
+    this.centerY = y;
+    this.self.y = y - 1 / 2 * this.height;
+};
 //更新位置
 Monster.prototype.update = function(target) {
     if (target.jumping) {
@@ -253,8 +311,12 @@ Monster.prototype.update = function(target) {
             context.globalCompositeOperation = "destination-over";
         }
     } else {
-        context.globalCompositeOperation = "source-over";
-        if (this.self.y - target.self.y < target.height && this.self.y - target.self.y > 0) {
+        if (this.self.y + this.height < target.self.y) {
+            context.globalCompositeOperation = "source-over";
+        } else {
+            context.globalCompositeOperation = "destination-over";
+        }
+        if (this.self.y - target.self.y < target.height && this.self.y - target.self.y > (target.height - 0.5 * this.self.height)) {
             if (this.self.x > target.self.x && this.self.x - target.self.x < target.width) {
                 this.crash();
             } else if (this.self.x < target.self.x && target.self.x - this.self.x < this.width / 2) {
@@ -270,23 +332,13 @@ Monster.prototype.move = function() {
         return false;
         delete monsters[this.index];
     }
-    var offset = this.width * (1 - DF.M.scale);
-    switch (this.pathIndex) {
-        case 1:
-            this.self.x = this.self.x + DF.M.pathOffset1;
-            break;
-        case 2:
-            this.self.x = this.self.x - DF.M.pathOffset2;
-            break;
-        case 3:
-            this.self.x = this.self.x - DF.M.pathOffset3;
-            break;
-    }
-    this.self.x += offset;
-    this.self.y -= DF.M.moveSpeed;
+    var kv = k(this.centerX, this.centerY, this.pathIndex);
+    var offsetY = DF.M.moveSpeed;
+    var center_x = this.centerX - offsetY * kv;
+    var center_y = this.centerY - offsetY;
+    this.setCenterX(center_x);
+    this.setCenterY(center_y);
     if (winHeight - this.self.y > DF.M.maxPath) {
-        this.self.x = this.x;
-        this.self.y = this.y;
         this.alive = false;
         delete monsters[this.index];
     } else {
@@ -297,6 +349,22 @@ Monster.prototype.move = function() {
         context.drawImage(this.self, this.self.x, this.self.y);
         this.width = this.width * DF.M.scale;
         this.height = this.height * DF.M.scale;
+        switch (this.pathIndex) {
+            case 1:
+                center_x = center_x + this.width * (1 - DF.M.scale);
+                this.setCenterX(center_x);
+                center_y = center_y + this.height * (1 - DF.M.scale);
+                this.setCenterY(center_y);
+                break;
+            case 2:
+                break;
+            case 3:
+                center_x = center_x + this.width * (1 - DF.M.scale);
+                this.setCenterX(center_x);
+                center_y = center_y + this.height * (1 - DF.M.scale);
+                this.setCenterY(center_y);
+                break;
+        }
     }
 };
 // 切图

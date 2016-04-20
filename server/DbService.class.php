@@ -23,13 +23,12 @@ class DbService {
 			// required
 			'database_type' => 'mysql',
 			'database_name' => 'game_12306',
-			'server' => 'localhost',
-			//'server' => '192.168.253.2',
-			'username' => 'root',
-			//'password' => 'tydic2016',
-			'password' => 'mysql',
-			//'password' => 'ZQH4996197!=',
-			'charset' => 'utf8',
+			'server'        => 'localhost',
+			//'server'      => '192.168.253.2',
+			'username'      => 'root',
+			'password'      => 'tydic2016',
+			//'password'    => 'ZQH4996197!=',
+			'charset'       => 'utf8',
 			
 			// [optional]
 			'port' => 3306,
@@ -96,7 +95,7 @@ class DbService {
 		$gmf_times  = $qry["gmf_times"];
 
 		$uid = -1;
-		if (array_key_exists("uid", $qry)) {
+		if (array_key_exists("uid", $qry) && $qry["uid"] != "") {
 			//已有记录用户
 			$uid  = $qry["uid"];
 
@@ -152,10 +151,17 @@ class DbService {
 		}
 		$results = $results[0];
 
+		$cnt = $this->db->count("record");
+		if ($this->hasErr()) {
+			$ack["ret"] = 2;
+			return false;
+		}
+		$ack["pcnt"]       = $cnt;
 		$ack["uid"]        = $uid;
 		$ack["gmf_times"]  = $results["gmf_times"];
 		$ack["total_time"] = $results["total_time"];
 		$ack["rank_id"]    = $results["rank_id"];
+
 
 		$ack["ret"] = 0;
 		return true;

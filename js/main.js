@@ -3,7 +3,7 @@ var isWeixinBrowser = function() {
     return (/micromessenger/.test(ua)) ? true : false;
 }
 if (!isWeixinBrowser()) {
-    //$('body').html('');
+    // $('body').html('Give Me Five!');
 }
 //========================================================================//
 //============================= :: INIT :: ===============================//
@@ -12,13 +12,14 @@ var canvasContainer, canvas, context;
 var player, shadow, monsters = [],
     asideMiles = [];
 var winWidth, winHeight, isGuide = false;
-var startTouchPoint, touchCache = 0.2;
+var startTouchPoint, touchCache = 0.1;
 var startTime, countDown = 60000,
     refreshDelay = 24,
     gmfCounts = 0;
+var stepLength = 2000;
 // 初始化页面
 $(function() {
-    loadPlayerCnt();
+    //loadPlayerCnt();
     $('#submitPwd').on('touchstart', function() {
         var pwd = $('#password').val();
         if (pwd && pwd.length > 0) {
@@ -108,7 +109,7 @@ var resizeHandler = function() {
 var resetStage = function() {
     winWidth = $(canvasContainer).width();
     winHeight = $(canvasContainer).height();
-    DF.M.maxPath = winHeight / 80 * 63;
+    DF.M.maxPath = winHeight / 80 * 61;
     DF.M.maxPathMile = winHeight / 80 * 61;
     if (canvas) {
         canvasContainer.removeChild(canvas);
@@ -182,7 +183,7 @@ var renderMonster = function() {
         var pathIndex = getRoundVal(1, 2);
         var type = getRoundVal(0, DF.M.types.length - 1);
         nextMonTime = currTime + randomTime;
-        temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);
+        temp = new Monster(DF.M.types[type], pathIndex, 147, 147, monIndex);
         monsters[monIndex] = temp;
         nextMonster = true;
         monIndex++;
@@ -201,7 +202,7 @@ var renderAsideMile = function() {
         mileIndex++;
     }
     if (!nextAsideMile) {
-        nextMileTime = currTime + 1500;
+        nextMileTime = currTime + stepLength;
         var temp = new AsideMile(DF.Miles[mileIndex], 100, 100, mileIndex);
         asideMiles[mileIndex] = temp;
         nextAsideMile = true;
@@ -269,7 +270,7 @@ var dialog = function(options) {
 //============================= :: AJAX :: ===============================//
 //========================================================================//
 //var service = 'http://ijita.me/game/';
-var service = 'http://localhost:12306/game/server/';
+var service = 'http://localhost:8080/wechat_game/game/server/';
 var executeAjax = function(opt) {
     $.ajax({
         url: opt.url,
@@ -309,6 +310,9 @@ var loadPlayerCnt = function() {
             // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
                 $('#playerCount').text(data.cnt);
+                $.fn.cookie('pcnt', data.cnt, {
+                    expires: 7
+                });
             }
         }
     });
@@ -332,6 +336,7 @@ var finishGame = function(timeCount, gmfCount) {
                 document.getElementById('timeCount').innerText = formatMilli(timeCount);
                 document.getElementById('gmfCount').innerText = gmfCount;
                 document.getElementById('currentRank').innerText = data.rank_id;
+                document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id) / (data.pcnt) * 100);
                 $('#gameAfter').show();
             }
         }

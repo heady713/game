@@ -6,12 +6,15 @@
         <meta content="描述" name="description"/>
         <meta content="关键字" name="keywords"/>
         <title>
-            疯狂追族
+            Give Me Five!
         </title>
         <link href="css/weui.min.css" rel="stylesheet"/>
         <link href="css/style.css" rel="stylesheet"/>
     </head>
     <body>
+        <div style="display:none">
+            <img src="images/preview.png">
+        </div>
         <section class="background" id="gameBefore">
             <div class="present">
             </div>
@@ -56,21 +59,27 @@
                     <div class="resultBox">
                     </div>
                     <p>
-                        您的成绩为：
+                        您的成绩为:
                         <span id="timeCount">
                             0
                         </span>
                         <br/>
-                        您为市运会加油了
+                        您本次为市运会加油了
                         <span id="gmfCount">
                             0
                         </span>
                         次
                         <br/>
-                        最佳成绩：
+                        您的最佳成绩:
                         <span id="bestTime">
                             0
                         </span>
+                        <br/>
+                        您一共为市运会加油了
+                        <span id="gmfCountAll">
+                            0
+                        </span>
+                        次
                         <br/>
                         当前排名：
                         <span id="currentRank">
@@ -78,14 +87,14 @@
                         </span>
                         <br/>
                         击败了全国
-                        <span id="currentPrsent">
+                        <span id="currentPersent">
                             0
                         </span>
                         %的玩家
                         <br/>
                     </p>
                     <div class="downBox">
-                        <a class="btn btn_m">
+                        <a class="btn btn_m" style="display:none">
                             排行榜
                         </a>
                         <a class="btn btn_m" id="btnReStart">
@@ -177,7 +186,9 @@
         </script>
         <script src="js/zepto.cookie.min.js">
         </script>
-        <script src="js/monster.js">
+        <script src="js/sprite.js">
+        </script>
+        <script src="js/player.js">
         </script>
         <script src="js/main.js">
         </script>

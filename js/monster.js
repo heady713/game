@@ -10,7 +10,7 @@ var DF = {
         pathOffset1: 0.4,
         pathOffset2: 0.24,
         pathOffset3: 0.86,
-        scale: 0.99,
+        scale: 0.98,
         maxPathMile: 0,
         pathOffset4: 0.9,
         scaleMile: 0.99,
@@ -218,6 +218,36 @@ Shadow.prototype.move = function() {
         this.moving = false;
     }
 };
+
+var WIDTH = 720, HEIGHT = 1280;
+var xl = 292, yl = 308, xr = 435;
+var xd1 = 128, xd2 = 592;
+
+function getScaleX(x) {
+    return winWidth*x/WIDTH;
+}
+
+function getScaleY(y) {
+    return winHeight*y/HEIGHT;
+}
+
+function k(x, y, idx) {
+    var x1 = getScaleX(xl);
+    var x2 = getScaleX(xr);
+    var y1 = getScaleY(yl);
+
+    var p1_x = 0;
+    switch(idx) {
+        case 1:
+            p1_x = xd1;
+        case 2:
+            p1_x = 360;
+        case 3:
+            p1_x = xd2;
+    }
+    var p1_y = y1;
+    return (x - p1_x)/(y - p1_y);
+}
 //========================================================================//
 //======================== :: Monster :: =================================//
 //========================================================================//
@@ -245,6 +275,9 @@ var Monster = function(type, pathIndex, width, height, index) {
     this.pathIndex = pathIndex;
     this.index = index;
     this.alive = true;
+
+    this.self.center_x = this.self.x + 0.5 * this.self.width;
+    this.self.center_y = this.self.y + 0.5 * this.self.height;
 };
 //更新位置
 Monster.prototype.update = function(target) {
@@ -269,26 +302,32 @@ Monster.prototype.update = function(target) {
     }
     this.move();
 };
+
+Monster.prototype.setCenterX = function(x) {
+    this.self.center_x = x;
+    this.self.x = this.x = x - 1/2 * this.width;
+};
+
+Monster.prototype.setCenterY = function(y) {
+    this.self.center_y = y;
+    this.self.y = this.y = y - 1/2 * this.height;
+};
 //MOVE
 Monster.prototype.move = function() {
     if (!this.alive) {
         return false;
         delete monsters[this.index];
     }
-    var offset = this.width * (1 - DF.M.scale);
-    switch (this.pathIndex) {
-        case 1:
-            this.self.x = this.self.x + DF.M.pathOffset1;
-            break;
-        case 2:
-            this.self.x = this.self.x - DF.M.pathOffset2;
-            break;
-        case 3:
-            this.self.x = this.self.x - DF.M.pathOffset3;
-            break;
-    }
-    this.self.x += offset;
-    this.self.y -= DF.M.moveSpeed;
+    var kv = k(this.self.center_x, this.self.center_y, this.pathIndex);
+
+    var offsetY = DF.M.moveSpeed;
+
+    var center_x = this.self.center_x - offsetY*kv;
+    var center_y = this.self.center_y - offsetY;
+
+    this.setCenterX(center_x);
+    this.setCenterY(center_y);
+
     if (winHeight - this.self.y > DF.M.maxPath) {
         this.self.x = this.x;
         this.self.y = this.y;
@@ -297,11 +336,28 @@ Monster.prototype.move = function() {
     } else {
         this.context.clearRect(0, 0, this.self.width + 1, this.self.height + 1);
         this.context.scale(DF.M.scale, DF.M.scale);
+
         var image = this.cutImg();
         this.context.drawImage(image, 0, 0, this.self.width, this.self.height);
         context.drawImage(this.self, this.self.x, this.self.y);
         this.width = this.width * DF.M.scale;
         this.height = this.height * DF.M.scale;
+        switch(this.pathIndex) {
+            case 1:
+                center_x = center_x + this.width * (1- DF.M.scale);
+                this.setCenterX(center_x);
+                center_y = center_y - this.height * (1- DF.M.scale);
+                this.setCenterY(center_y);
+                break;
+            case 2:
+                break;
+            case 3:
+                center_x = center_x - this.width * (1- DF.M.scale);
+                this.setCenterX(center_x);
+                center_y = center_y - this.height * (1- DF.M.scale);
+                this.setCenterY(center_y);
+                break;
+        }
     }
 };
 // 切图

@@ -3,7 +3,7 @@ var isWeixinBrowser = function() {
     return (/micromessenger/.test(ua)) ? true : false;
 }
 if (!isWeixinBrowser()) {
-    $('body').html('Give Me Five!');
+    // $('body').html('Give Me Five!');
 }
 //========================================================================//
 //============================= :: INIT :: ===============================//

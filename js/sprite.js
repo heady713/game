@@ -48,10 +48,10 @@ CANVAS.Sprite = function(src, width, height) {
 CANVAS.Sprite.prototype.addTo = function(canvas) {
     this.parentCanvas = canvas;
 };
-CANVAS.Sprite.prototype.refresh = function() {
+CANVAS.Sprite.prototype.refresh = function(opt) {
     if (this.parentCanvas) {
         var context = this.parentCanvas.getContext('2d');
-        context.globalCompositeOperation = "source-over";
+        context.globalCompositeOperation = opt ? opt : "lighter";
         context.drawImage(this.canvas, this.x, this.y);
     }
 };
@@ -72,11 +72,7 @@ CANVAS.Sprite.prototype.setScale = function(scaleX, scaleY) {
     this.context.clearRect(0, 0, this.canvas.widht, this.canvas.height);
     this.context.scale(scaleX, scaleY);
     this.context.drawImage(this.image, 0, 0);
-    var newWidth = this.width * scaleX;
-    var newHeight = this.height * scaleX;
-    var offsetX = (this.width - newWidth) / 4;
-    var offsetY = (this.height - newHeight) / 4;
-    this.width = newWidth;
-    this.height = newHeight;
+    this.width = this.width * scaleX;
+    this.height = this.height * scaleX;
     this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y));
 };

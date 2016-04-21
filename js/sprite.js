@@ -4,9 +4,9 @@ var GAME = GAME || {};
 // ===================================================
 var WIDTH = 720,
     HEIGHT = 1280;
-var xl = 292,
+var xl = 310,
     yl = 308,
-    xr = 435,
+    xr = 408,
     xA = 290;
 var xd1 = 128,
     xd2 = 592;
@@ -16,7 +16,6 @@ var getScaleX = function(x) {
 var getScaleY = function(y) {
     return winHeight * y / HEIGHT;
 };
-var k = Math.abs((xl - xd1) / (HEIGHT - yl));
 /// ==================================================
 GAME.children = {};
 GAME.childCount = 0;
@@ -58,8 +57,8 @@ GAME.Sprite = function(tag, src, width, height, zorder) {
     this.height = height;
     //锚点
     this.anchor = {
-        x: 0,
-        y: 0
+        x: 0.5,
+        y: 0.5
     };
     //左上点坐标
     this.pos = {
@@ -98,9 +97,17 @@ GAME.Sprite.prototype.setAnchorPoint = function(x, y) {
     this.anchor.x = x;
     this.anchor.y = y;
 };
-//设置锚点坐标 即设定左上点坐标
+//设置锚点坐标 即间接设定左上点坐标
 GAME.Sprite.prototype.setPosition = function(x, y) {
     this.pos.x = x - this.anchor.x * this.width * this.scale.x;
+    this.pos.y = y - this.anchor.y * this.height * this.scale.y;
+};
+//设置锚点X坐标 即间接设定左上点坐标
+GAME.Sprite.prototype.setPositionX = function(x) {
+    this.pos.x = x - this.anchor.x * this.width * this.scale.x;
+};
+//设置锚点Y坐标 即间接设定左上点坐标
+GAME.Sprite.prototype.setPositionY = function(y) {
     this.pos.y = y - this.anchor.y * this.height * this.scale.y;
 };
 //获取锚点X坐标
@@ -120,3 +127,10 @@ GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
     this.scale.x = scaleX;
     this.scale.y = scaleY;
 };
+//
+GAME.Sprite.prototype.getCurrentWidth = function() {
+    return this.width * this.scale.x;
+}
+GAME.Sprite.prototype.getCurrentHeight = function() {
+    return this.height * this.scale.y;
+}

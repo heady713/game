@@ -24,7 +24,7 @@ GAME.updateChildren = function() {
         });
         for (var i = 0; i < zorderList.length; ++i) {
             var child = zorderList[i].sprite;
-            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width*child.scaleX, child.height*child.scaleY);
+            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width*child.scale.x, child.height*child.scale.y);
         };
     }
 };

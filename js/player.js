@@ -316,11 +316,15 @@ Monster.prototype.crash = function() {
 // 创建
 var AsideMile = function(type, width, height, index) {
     GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 3]);
-    var x = -width / 2;
+    var x = -50;
     var y = winHeight;
     this.setCenterPosition(x, y);
-    this.k = Math.abs(295 / (HEIGHT - yl));
+    this.k = Math.abs(290 / (HEIGHT - yl));
     this.index = index;
+};
+//更新位置
+AsideMile.prototype.fixX = function() {
+    return this.pos.x + (this.width - this.cur.width)/2;
 };
 //更新位置
 AsideMile.prototype.update = function(target) {
@@ -335,14 +339,14 @@ AsideMile.prototype.move = function() {
         delete asideMiles[this.index];
         this.removeFromGlobal();
     } else {
-        // var ks = DF.M.scale + (this.center.y - getScaleY(yl)) * (1 - DF.M.scale) / getScaleY(HEIGHT - yl);
-        var ks = 0.99;
+        var ks = DF.M.scale + (this.center.y - getScaleY(yl)) * (1 - DF.M.scale) / getScaleY(HEIGHT - yl);
+        // var ks = 0.99;
         this.setScale(ks, ks);
         this.setCenterPosition(x, y);
-        GAME.context.beginPath();
-        GAME.context.moveTo(0, 0);
-        GAME.context.lineTo(x, y);
-        GAME.context.strokeStyle = "#ffffff";
-        GAME.context.stroke();
+        // GAME.context.beginPath();
+        // GAME.context.moveTo(0, 0);
+        // GAME.context.lineTo(x, y);
+        // GAME.context.strokeStyle = "#ffffff";
+        // GAME.context.stroke();
     }
 };

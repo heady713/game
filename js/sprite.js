@@ -36,13 +36,20 @@ GAME.updateChildren = function() {
         });
         for (var i = 0; i < zorderList.length; ++i) {
             var child = zorderList[i].sprite;
-            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width, child.height);
+            var x = child.pos.x;
+            if (child.fixX) {
+                x = child.fixX();
+            };
+            GAME.context.drawImage(child.image, x, child.pos.y, child.cur.width, child.cur.height);
         };
     }
 };
 GAME.getDistance = function(pointA, pointB) {
     return Math.sqrt(Math.pow(pointA.x - pointB.x, 2), Math.pow(pointA.y - pointB.y, 2))
 };
+// function f (sprite) {
+//     return sprite.pos.x + (sprite.width - sprite.cur.width)/2;
+// }
 // ===================================================
 // =====================::Sprite::====================
 // ===================================================
@@ -55,8 +62,11 @@ GAME.Sprite = function(tag, src, width, height, zorder) {
     this.src = src;
     this.width = width;
     this.height = height;
-    this.widthOrl = width;
-    this.heightOrl = height;
+    //保存当前长宽
+    this.cur = {
+        width: width,
+        height: height
+    };
     this.pos = {
         x: 0,
         y: 0
@@ -90,23 +100,21 @@ GAME.Sprite.prototype.removeFromGlobal = function() {
 GAME.Sprite.prototype.setPosition = function(x, y) {
     this.pos.x = x;
     this.pos.y = y;
-    this.center.x = this.pos.x + 0.5 * this.width;
-    this.center.y = this.pos.y + 0.5 * this.height;
+    this.center.x = this.pos.x + 0.5 * this.cur.width;
+    this.center.y = this.pos.y + 0.5 * this.cur.height;
 };
 GAME.Sprite.prototype.setCenterPosition = function(x, y) {
     this.center.x = x;
     this.center.y = y;
-    this.pos.x = x - 0.5 * this.width;
-    this.pos.y = y - 0.5 * this.height;
+    this.pos.x = x - 0.5 * this.cur.width;
+    this.pos.y = y - 0.5 * this.cur.height;
 };
 GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
+    var delta_x = (this.cur.width - this.width * scaleX)/2;
+    var delta_y = (this.cur.height - this.height * scaleY)/2;
+    this.setCenterPosition(this.center.x + delta_x, this.center.y + delta_y);
     this.scale.x = scaleX;
     this.scale.y = scaleY;
-    var newWidth = this.width * this.scale.x;
-    var newHeight = this.height * this.scale.y;
-    var delta_x = (this.width - newWidth) * 0.5;
-    var delta_y = (this.height - newHeight) * 0.5;
-    this.width = newWidth;
-    this.height = newHeight;
-    this.setCenterPosition(this.center.x + delta_x, this.center.y + delta_y);
+    this.cur.width = this.scale.x * this.width;
+    this.cur.height = this.scale.y * this.height;
 };

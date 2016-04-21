@@ -109,8 +109,9 @@ var resizeHandler = function() {
 var resetStage = function() {
     winWidth = $(canvasContainer).width();
     winHeight = $(canvasContainer).height();
-    DF.M.maxPath = winHeight / 80 * 61;
-    DF.M.maxPathMile = winHeight / 80 * 61;
+    DF.M.maxPath = getScaleY(HEIGHT - yl);
+    DF.M.maxPathMile = getScaleY(HEIGHT - yl);
+    DF.M.moveSpeed = winHeight * DF.M.moveSpeed;
     if (GAME.canvas) {
         canvasContainer.removeChild(GAME.canvas);
     }

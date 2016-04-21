@@ -111,7 +111,9 @@ var resetStage = function() {
     winHeight = $(canvasContainer).height();
     DF.M.maxPath = getScaleY(HEIGHT - yl);
     DF.M.maxPathMile = getScaleY(HEIGHT - yl);
-    DF.M.moveSpeed = winHeight * DF.M.moveSpeed;
+    DF.M.moveSpeed = winHeight * 0.01;
+    DF.P.moveSpeed = winHeight * 0.01;
+    DF.P.pathWidth = winWidth * 0.18;
     if (GAME.canvas) {
         canvasContainer.removeChild(GAME.canvas);
     }
@@ -184,7 +186,7 @@ var renderMonster = function() {
         var pathIndex = getRoundVal(1, 2);
         var type = getRoundVal(0, DF.M.types.length - 1);
         nextMonTime = currTime + randomTime;
-        temp = new Monster(DF.M.types[type], pathIndex, 147, 147, monIndex);
+        temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);
         monsters[monIndex] = temp;
         nextMonster = true;
         monIndex++;

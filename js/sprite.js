@@ -16,13 +16,12 @@ var getScaleX = function(x) {
 var getScaleY = function(y) {
     return winHeight * y / HEIGHT;
 };
-var k = Math.abs((xl - xd1) / (HEIGHT - yl));
 /// ==================================================
 GAME.children = {};
 GAME.childCount = 0;
 GAME.updateChildren = function() {
     if (GAME.childCount > 0) {
-        // GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
+        GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
         var zorderList = [];
         for (var k in GAME.children) {
             var child = GAME.children[k];
@@ -110,8 +109,8 @@ GAME.Sprite.prototype.setCenterPosition = function(x, y) {
     this.pos.y = y - 0.5 * this.cur.height;
 };
 GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
-    var delta_x = (this.cur.width - this.width * scaleX)/2;
-    var delta_y = (this.cur.height - this.height * scaleY)/2;
+    var delta_x = (this.cur.width - this.width * scaleX) / 2;
+    var delta_y = (this.cur.height - this.height * scaleY) / 2;
     this.setCenterPosition(this.center.x + delta_x, this.center.y + delta_y);
     this.scale.x = scaleX;
     this.scale.y = scaleY;

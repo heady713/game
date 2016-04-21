@@ -187,8 +187,7 @@ var renderMonster = function() {
     }
     if (!nextMonster) {
         var randomTime = getRoundVal(1000, 3000);
-        // var pathIndex = getRoundVal(1, 2);
-        var pathIndex = 3;
+        var pathIndex = getRoundVal(1, 2);
         var type = getRoundVal(0, DF.M.types.length - 1);
         nextMonTime = currTime + randomTime;
         temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);

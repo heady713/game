@@ -205,6 +205,8 @@ var renderAsideMile = function() {
     if (!nextAsideMile) {
         nextMileTime = currTime + stepLength;
         var temp = new AsideMile(DF.Miles[mileIndex], 100, 100, mileIndex);
+        temp.setAnchorPoint(1, 0);
+        temp.setPosition(-10, winHeight);
         asideMiles[mileIndex] = temp;
         nextAsideMile = true;
     }

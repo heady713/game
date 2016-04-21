@@ -22,7 +22,7 @@ GAME.children = {};
 GAME.childCount = 0;
 GAME.updateChildren = function() {
     if (GAME.childCount > 0) {
-        // GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
+        GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
         var zorderList = [];
         for (var k in GAME.children) {
             var child = GAME.children[k];
@@ -36,20 +36,14 @@ GAME.updateChildren = function() {
         });
         for (var i = 0; i < zorderList.length; ++i) {
             var child = zorderList[i].sprite;
-            var x = child.pos.x;
-            if (child.fixX) {
-                x = child.fixX();
-            };
-            GAME.context.drawImage(child.image, x, child.pos.y, child.cur.width, child.cur.height);
+            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width * child.scale.x, child.height * child.scale.y);
         };
     }
 };
 GAME.getDistance = function(pointA, pointB) {
     return Math.sqrt(Math.pow(pointA.x - pointB.x, 2), Math.pow(pointA.y - pointB.y, 2))
 };
-// function f (sprite) {
-//     return sprite.pos.x + (sprite.width - sprite.cur.width)/2;
-// }
+
 // ===================================================
 // =====================::Sprite::====================
 // ===================================================
@@ -62,23 +56,22 @@ GAME.Sprite = function(tag, src, width, height, zorder) {
     this.src = src;
     this.width = width;
     this.height = height;
-    //保存当前长宽
-    this.cur = {
-        width: width,
-        height: height
+    //锚点
+    this.anchor = {
+        x: 0,
+        y: 0
     };
+    //左上点坐标
     this.pos = {
         x: 0,
         y: 0
     };
-    this.center = {
-        x: this.pos.x + 0.5 * this.width,
-        y: this.pos.y + 0.5 * this.height
-    };
+    //缩放比
     this.scale = {
         x: 1,
         y: 1
     };
+    //Sprite的图像
     this.image = new Image();
     this.image.src = this.src;
     var self = this;
@@ -88,6 +81,7 @@ GAME.Sprite = function(tag, src, width, height, zorder) {
         GAME.updateChildren();
     };
 }
+//移除自身
 GAME.Sprite.prototype.removeFromGlobal = function() {
     if (GAME.children[this.tag] == undefined) {
         console.log("tag:", this.tag, "isnot exists");
@@ -95,26 +89,34 @@ GAME.Sprite.prototype.removeFromGlobal = function() {
     }
     delete GAME.children[this.tag];
     GAME.childCount--;
-    // GAME.updateChildren();
 };
+//设置锚点
+GAME.Sprite.prototype.setAnchorPoint = function(x, y) {
+    if (x > 1 || x < 0 || y > 1 || y < 0) {
+        console.log("AnchorPoint must between [0, 1]");
+    };
+    this.anchor.x = x;
+    this.anchor.y = y;
+};
+//设置锚点坐标 即设定左上点坐标
 GAME.Sprite.prototype.setPosition = function(x, y) {
-    this.pos.x = x;
-    this.pos.y = y;
-    this.center.x = this.pos.x + 0.5 * this.cur.width;
-    this.center.y = this.pos.y + 0.5 * this.cur.height;
+    this.pos.x = x - this.anchor.x * this.width * this.scale.x;
+    this.pos.y = y - this.anchor.y * this.height * this.scale.y;
 };
-GAME.Sprite.prototype.setCenterPosition = function(x, y) {
-    this.center.x = x;
-    this.center.y = y;
-    this.pos.x = x - 0.5 * this.cur.width;
-    this.pos.y = y - 0.5 * this.cur.height;
+//获取锚点X坐标
+GAME.Sprite.prototype.getPositionX = function() {
+    return this.pos.x + this.anchor.x * this.width * this.scale.x;
 };
+//获取锚点Y坐标
+GAME.Sprite.prototype.getPositionY = function() {
+    return this.pos.y + this.anchor.y * this.height * this.scale.y;
+};
+//根据锚点进行缩放，由于drawImage是以左上点为原点，所以这里需要根据相应情况对左上点进行偏移
 GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
-    var delta_x = (this.cur.width - this.width * scaleX)/2;
-    var delta_y = (this.cur.height - this.height * scaleY)/2;
-    this.setCenterPosition(this.center.x + delta_x, this.center.y + delta_y);
+    var delta_x = this.width * (this.scale.x - scaleX) * this.anchor.x;
+    var delta_y = this.height * (this.scale.y - scaleY) * this.anchor.y;
+    this.pos.x += delta_x;
+    this.pos.y += delta_y;
     this.scale.x = scaleX;
     this.scale.y = scaleY;
-    this.cur.width = this.scale.x * this.width;
-    this.cur.height = this.scale.y * this.height;
 };

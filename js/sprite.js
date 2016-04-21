@@ -1,78 +1,102 @@
-var CANVAS = CANVAS || {};
+var GAME = GAME || {};
 // ===================================================
-// =====================::POINT::=====================
+// =====================::GLOBAL::====================
 // ===================================================
-CANVAS.Point = function(x, y) {
-    this.x = isNaN(x) ? 0 : x;
-    this.y = isNaN(y) ? 0 : y;
-}
-CANVAS.Point.prototype.clone = function() {
-    return new CANVAS.Point(this.x, this.y);
+var WIDTH = 720,
+    HEIGHT = 1280;
+var xl = 292,
+    yl = 308,
+    xr = 435;
+var xd1 = 128,
+    xd2 = 592;
+var getScaleX = function(x) {
+    return winWidth * x / WIDTH;
 };
-CANVAS.Point.prototype.setPosition = function(x, y) {
-    this.x = isNaN(x) ? this.x : x;
-    this.y = isNaN(y) ? this.y : y;
+var getScaleY = function(y) {
+    return winHeight * y / HEIGHT;
 };
-CANVAS.Point.prototype.equals = function(point) {
-    return this.x == point.x && this.y == point.y;
+var k = Math.abs((xl - xd1) / (yl - WIDTH));
+/// ==================================================
+GAME.children = {};
+GAME.childCount = 0;
+GAME.updateChildren = function() {
+    if (GAME.childCount > 0) {
+        GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
+        var zorderList = [];
+        for (var k in GAME.children) {
+            var child = GAME.children[k];
+            zorderList.push({
+                sprite: child,
+                zorder: child.zorder
+            });
+        };
+        zorderList.sort(function(a, b) {
+            return a.zorder >= b.zorder ? 1 : -1;
+        });
+        for (var i = 0; i < zorderList.length; ++i) {
+            var child = zorderList[i].sprite;
+            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width * child.scale.x, child.height * child.scale.y);
+        };
+    }
 };
-CANVAS.Point.prototype.toString = function() {
-    return "{x:" + this.x + " , y:" + this.y + "}";
+GAME.getDistance = function(pointA, pointB) {
+    return Math.sqrt(Math.pow(pointA.x - pointB.x, 2), Math.pow(pointA.y - pointB.y, 2))
 };
 // ===================================================
 // =====================::Sprite::====================
 // ===================================================
-CANVAS.Sprite = function(src, width, height) {
-    for (var key in CANVAS.Sprite.prototype) {
-        this.__proto__[key] = CANVAS.Sprite.prototype[key];
+GAME.Sprite = function(tag, src, width, height, zorder) {
+    for (var key in GAME.Sprite.prototype) {
+        this.__proto__[key] = GAME.Sprite.prototype[key];
     }
-    this.canvas = document.createElement('canvas');
-    this.canvas.x = this.x = 0;
-    this.canvas.y = this.y = 0;
-    this.context = this.canvas.getContext('2d');
-    this.canvas.widht = this.width = width;
-    this.canvas.height = this.height = height;
-    this.center = {
-        x: this.x + 0.5 * this.width,
-        y: this.y + 0.5 * this.height
+    this.tag = tag;
+    this.zorder = zorder || 0;
+    this.src = src;
+    this.width = width;
+    this.height = height;
+    this.pos = {
+        x: 0,
+        y: 0
     };
-    this.parentCanvas = null;
+    this.center = {
+        x: this.pos.x + 0.5 * this.width,
+        y: this.pos.y + 0.5 * this.height
+    };
+    this.scale = {
+        x: 1,
+        y: 1
+    };
     this.image = new Image();
-    this.image.src = src;
+    this.image.src = this.src;
     var self = this;
     this.image.onload = function() {
-        self.context.drawImage(self.image, 0, 0);
-        self.refresh();
+        GAME.children[tag] = self;
+        GAME.childCount++;
+        GAME.updateChildren();
     };
-};
-CANVAS.Sprite.prototype.addTo = function(canvas) {
-    this.parentCanvas = canvas;
-};
-CANVAS.Sprite.prototype.refresh = function(opt) {
-    if (this.parentCanvas) {
-        var context = this.parentCanvas.getContext('2d');
-        context.globalCompositeOperation = opt ? opt : "lighter";
-        context.drawImage(this.canvas, this.x, this.y);
+}
+GAME.Sprite.prototype.removeFromGlobal = function() {
+    if (GAME.children[this.tag] == undefined) {
+        console.log("tag:", this.tag, "isnot exists");
+        return;
     }
+    delete GAME.children[this.tag];
+    GAME.childCount--;
+    // GAME.updateChildren();
 };
-CANVAS.Sprite.prototype.setPosition = function(point) {
-    this.canvas.x = this.x = point.x;
-    this.canvas.y = this.y = point.y;
-    this.center.x = this.x + 0.5 * this.width;
-    this.center.y = this.y + 0.5 * this.height;
+GAME.Sprite.prototype.setPosition = function(x, y) {
+    this.pos.x = x;
+    this.pos.y = y;
+    this.center.x = this.pos.x + 0.5 * this.width;
+    this.center.y = this.pos.y + 0.5 * this.height;
 };
-CANVAS.Sprite.prototype.setCenterPosition = function(point) {
-    this.center.x = point.x;
-    this.center.y = point.y;
-    this.canvas.x = this.x = point.x - 0.5 * this.width;
-    this.canvas.y = this.y = point.y - 0.5 * this.height;
+GAME.Sprite.prototype.setCenterPosition = function(x, y) {
+    this.center.x = x;
+    this.center.y = y;
+    this.pos.x = x - 0.5 * this.width;
+    this.pos.y = y - 0.5 * this.height;
 };
-CANVAS.Sprite.prototype.setScale = function(scaleX, scaleY) {
-    this.context = this.canvas.getContext('2d');
-    this.context.clearRect(0, 0, this.canvas.widht, this.canvas.height);
-    this.context.scale(scaleX, scaleY);
-    this.context.drawImage(this.image, 0, 0);
-    this.width = this.width * scaleX;
-    this.height = this.height * scaleX;
-    this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y));
+GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
+    this.scale.x = scaleX;
+    this.scale.y = scaleY;
 };

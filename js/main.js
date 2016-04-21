@@ -111,15 +111,14 @@ var resetStage = function() {
     winHeight = $(canvasContainer).height();
     DF.M.maxPath = winHeight / 80 * 61;
     DF.M.maxPathMile = winHeight / 80 * 61;
-    if (canvas) {
-        canvasContainer.removeChild(canvas);
+    if (GAME.canvas) {
+        canvasContainer.removeChild(GAME.canvas);
     }
-    canvas = document.createElement('canvas');
-    canvas.width = winWidth;
-    canvas.height = winHeight;
-    canvas.style.position = "absolute";
-    context = canvas.getContext("2d");
-    canvasContainer.appendChild(canvas);
+    GAME.canvas = document.createElement('canvas');
+    GAME.canvas.width = winWidth;
+    GAME.canvas.height = winHeight;
+    GAME.context = GAME.canvas.getContext('2d');
+    canvasContainer.appendChild(GAME.canvas);
     player = null;
     shadow = null;
     monsters = [];
@@ -156,7 +155,7 @@ var loop = function() {
     document.getElementById('miles').innerText = 'GMF: ' + gmfCounts;
     if (isContinue) {;
         if (!player.hurt) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
+            // context.clearRect(0, 0, canvas.width, canvas.height);
             shadow.update();
             player.update()
             renderMonster();
@@ -164,6 +163,7 @@ var loop = function() {
         } else {
             player.hurtUpdate();
         }
+        GAME.updateChildren();
         requestAnimationFrame(loop);
     } else {
         finishGame((runingTime / 1000).toFixed(1), gmfCounts);

@@ -45,7 +45,7 @@ html, body {
     width: 60px;
     height: 60px;
     background: #474747;
-    display: none;
+    display: block;
 }
 
 .background .downBox {
@@ -123,7 +123,7 @@ html, body {
     width: 100%;
     height: 100%;
     background: #000;
-    z-index: 0;
+    z-index: -1;
     opacity: .3;
 }
 
@@ -310,4 +310,67 @@ html, body {
     color: #333;
     height: 1.41176471em;
     line-height: 1.41176471;
+}
+
+
+/*====================  dialog_tab =======================*/
+
+#activity .mask {
+    opacity: 0.7;
+}
+#activity .container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top:0px;
+    z-index: -1;
+}
+
+.dialog_tab {
+    position: relative;
+    height: 100%;
+}
+
+.dialog_tab .dialog_navbar {
+    display: flex;
+    z-index: 1;
+    top: 0;
+    width: 100%;
+    border-bottom: 2px solid #aaa;
+}
+
+.dialog_tab .dialog_navbar .dialog_navbar_item {
+    display: block;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    padding: 13px 0;
+    text-align: center;
+    color: #ffffff;
+    font: normal 1.3em/1.8em 'Microsoft Yahei', Arial, sans-serif;
+}
+
+.dialog_tab .dialog_tab_bd {
+    display: block;
+    color: #ffffff;
+}
+
+.dialog_tab .dialog_tab_bd h3 {
+    float: left;
+    display: block;
+    color: #000000;
+    background: #fff;
+    margin: 10px;
+    padding: 3px 5px;
+}
+
+.dialog_tab .dialog_tab_bd p {
+    clear: both;
+    margin: 10px 0 0 10px;
+}
+
+.dialog_tab .dialog_tab_bd p a{
+    color: #CECB30;
+    text-decoration: underline;
 }

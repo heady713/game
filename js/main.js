@@ -32,6 +32,10 @@ $(function() {
         initStage();
         stopPropagation(event);
     });
+    $('#gameBefore').on('touchstart', '.present', function(event) {
+        $('#activity').show();
+        stopPropagation(event);
+    });
     $('body').on('touchstart touchmove', function(event) {
         event.preventDefault();
     });

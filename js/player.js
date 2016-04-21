@@ -5,12 +5,12 @@ var DF = {
     M: {
         //types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
         types: ['shou', 'zuqiu'],
-        moveSpeed: 3,
+        moveSpeed: 0.01,
         maxPath: 0,
         pathOffset1: 0.8,
         pathOffset2: 0.0,
         pathOffset3: 0.8,
-        scale: 0.988,
+        scale: 0.5,
         maxPathMile: 0,
         pathOffset4: 1,
         scaleMile: 0.992,
@@ -231,25 +231,19 @@ Monster.prototype.update = function(target) {
         distH = target.height * 0.5 + this.height * 0.5,
         distW = target.width * 0.5 + this.width * 0.5;
     if (target.jumping) {
-        if (this.center.y - target.center.y < distH) {
-            opt = 'destination-over';
-        }
+        if (this.center.y - target.center.y < distH) {}
     } else {
-        if (target.center.y - this.center.y > target.height * 0.5) {
-            opt = 'source-over';
-        } else {
-            opt = 'destination-over';
-        }
+        if (target.center.y - this.center.y > target.height * 0.5) {} else {}
         if (this.center.y - target.center.y < distH && this.center.y - target.center.y > 0) {
             if (Math.abs(this.center.x - target.center.x) < distW) {
-                this.crash();
+                //this.crash();
             }
         }
     }
-    this.move(opt);
+    this.move();
 };
 //MOVE
-Monster.prototype.move = function(opt) {
+Monster.prototype.move = function() {
     if (!this.alive) {
         return false;
         delete monsters[this.index];
@@ -257,7 +251,7 @@ Monster.prototype.move = function(opt) {
     }
     switch (this.pathIndex) {
         case 1:
-            this.center.x + DF.M.moveSpeed * k;
+            this.center.x += DF.M.moveSpeed * k;
             break;
         case 2:
             break;
@@ -273,7 +267,6 @@ Monster.prototype.move = function(opt) {
     } else {
         this.image = this.cutImg();
         var maxPathY = getScaleY(yl);
-
         this.setScale(DF.M.scale, DF.M.scale);
         this.setCenterPosition(this.center.x, this.center.y);
     }
@@ -323,9 +316,10 @@ Monster.prototype.crash = function() {
 // 创建
 var AsideMile = function(type, width, height, index) {
     GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 3]);
-    var x = 0;
-    var y = winHeight - this.height;
+    var x = -width / 2;
+    var y = winHeight;
     this.setCenterPosition(x, y);
+    this.k = Math.abs(295 / (HEIGHT - yl));
     this.index = index;
 };
 //更新位置
@@ -334,13 +328,21 @@ AsideMile.prototype.update = function(target) {
 };
 //MOVE
 AsideMile.prototype.move = function() {
-    this.center.x += DF.M.pathOffset4;
-    this.center.y -= DF.M.moveSpeed;
+    var x, y;
+    x = this.center.x + DF.M.moveSpeed * this.k;
+    y = this.center.y - DF.M.moveSpeed;
     if (winHeight - this.center.y > DF.M.maxPathMile) {
         delete asideMiles[this.index];
         this.removeFromGlobal();
     } else {
-        this.setScale(DF.M.scaleMile, DF.M.scaleMile);
-        this.setCenterPosition(this.center.x, this.center.y);
+        // var ks = DF.M.scale + (this.center.y - getScaleY(yl)) * (1 - DF.M.scale) / getScaleY(HEIGHT - yl);
+        var ks = 0.99;
+        this.setScale(ks, ks);
+        this.setCenterPosition(x, y);
+        GAME.context.beginPath();
+        GAME.context.moveTo(0, 0);
+        GAME.context.lineTo(x, y);
+        GAME.context.strokeStyle = "#ffffff";
+        GAME.context.stroke();
     }
 };

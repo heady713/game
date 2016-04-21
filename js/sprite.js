@@ -6,7 +6,8 @@ var WIDTH = 720,
     HEIGHT = 1280;
 var xl = 292,
     yl = 308,
-    xr = 435;
+    xr = 435,
+    xA = 290;
 var xd1 = 128,
     xd2 = 592;
 var getScaleX = function(x) {
@@ -15,13 +16,13 @@ var getScaleX = function(x) {
 var getScaleY = function(y) {
     return winHeight * y / HEIGHT;
 };
-var k = Math.abs((xl - xd1) / (yl - WIDTH));
+var k = Math.abs((xl - xd1) / (HEIGHT - yl));
 /// ==================================================
 GAME.children = {};
 GAME.childCount = 0;
 GAME.updateChildren = function() {
     if (GAME.childCount > 0) {
-        GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
+        // GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
         var zorderList = [];
         for (var k in GAME.children) {
             var child = GAME.children[k];
@@ -35,7 +36,7 @@ GAME.updateChildren = function() {
         });
         for (var i = 0; i < zorderList.length; ++i) {
             var child = zorderList[i].sprite;
-            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width * child.scale.x, child.height * child.scale.y);
+            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width, child.height);
         };
     }
 };
@@ -54,6 +55,8 @@ GAME.Sprite = function(tag, src, width, height, zorder) {
     this.src = src;
     this.width = width;
     this.height = height;
+    this.widthOrl = width;
+    this.heightOrl = height;
     this.pos = {
         x: 0,
         y: 0
@@ -99,4 +102,11 @@ GAME.Sprite.prototype.setCenterPosition = function(x, y) {
 GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
     this.scale.x = scaleX;
     this.scale.y = scaleY;
+    var newWidth = this.width * this.scale.x;
+    var newHeight = this.height * this.scale.y;
+    var delta_x = (this.width - newWidth) * 0.5;
+    var delta_y = (this.height - newHeight) * 0.5;
+    this.width = newWidth;
+    this.height = newHeight;
+    this.setCenterPosition(this.center.x + delta_x, this.center.y + delta_y);
 };

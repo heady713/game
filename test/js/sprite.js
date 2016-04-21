@@ -14,9 +14,17 @@ GAME.childCount = 0;
 GAME.updateChildren = function() {
     if (GAME.childCount > 0) {
         GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
+        var zorderList = [];
         for (var k in GAME.children) {
             var child = GAME.children[k];
-            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width, child.height);
+            zorderList.push({sprite: child, zorder: child.zorder});
+        };
+        zorderList.sort(function(a, b){
+            return a.zorder >= b.zorder ? 1 : -1;
+        });
+        for (var i = 0; i < zorderList.length; ++i) {
+            var child = zorderList[i].sprite;
+            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width*child.scaleX, child.height*child.scaleY);
         };
     }
 };
@@ -28,8 +36,9 @@ GAME.getDistance = function(pointA, pointB) {
 // ===================================================
 // =====================::Sprite::====================
 // ===================================================
-GAME.Sprite = function(tag, src, width, height) {
+GAME.Sprite = function(tag, src, width, height, zorder) {
     this.tag = tag;
+    this.zorder = zorder || 0;
     this.src = src;
     this.width = width;
     this.height = height;
@@ -81,10 +90,8 @@ GAME.Sprite.prototype.setCenterPosition = function(x, y) {
 };
 
 GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
-    this.scale.x *= scaleX;
-    this.scale.y *= scaleY
-    this.width *= scaleX;
-    this.height *= scaleY;
+    this.scale.x = scaleX;
+    this.scale.y = scaleY;
 };
 
 
@@ -108,7 +115,7 @@ window.requestAnimationFrame = window.__requestAnimationFrame ||
 var canvasContainer = document.getElementById('game');
 canvasContainer.appendChild(GAME.canvas);
 
-var bg = new GAME.Sprite('bg','img/bg.jpg', 320, 640);
+var bg = new GAME.Sprite('bg','img/bg.jpg', 320, 640, 0);
 
 
 var Player = function(tag, src, width, height) {
@@ -121,7 +128,7 @@ Player.prototype.getX = function() {
     return {x:this.pos.x, y:this.pos.y, cx:this.center.x, cy:this.center.y};
 };
 
-var player = new Player('player', 'img/jiaose_s.png', 56, 122);
+var player = new Player('player', 'img/jiaose_s.png', 56, 122, 2);
 player.setCenterPosition(160, 320);
 
 
@@ -131,13 +138,13 @@ var xd1 = 128,
     xd2 = 592;
 var k = Math.abs((xl-xd1)/(yl-1280));
 
-var soccer1 = new GAME.Sprite('soccer1', 'img/Soccer.png', 40, 40);
+var soccer1 = new GAME.Sprite('soccer1', 'img/Soccer.png', 40, 40, 1);
 soccer1.setCenterPosition(160, 640);
 
-var soccer2 = new GAME.Sprite('soccer2', 'img/Soccer.png', 40, 40);
+var soccer2 = new GAME.Sprite('soccer2', 'img/Soccer.png', 40, 40, 1);
 soccer2.setCenterPosition(xd1*320/720, 640);
 
-var soccer3 = new GAME.Sprite('soccer3', 'img/Soccer.png', 40, 40);
+var soccer3 = new GAME.Sprite('soccer3', 'img/Soccer.png', 40, 40, 1);
 soccer3.setCenterPosition(xd2*320/720, 640);
 
 var step = 4;
@@ -185,8 +192,8 @@ Player.prototype.getX = function() {
     return {x:this.pos.x, y:this.pos.y, cx:this.center.x, cy:this.center.y};
 };
 
-var player = new Player('player', 'img/jiaose_s.png', 56, 122);
-player.setCenterPosition(160, 320);
-console.log(player.getX());
+var player2 = new Player('player2', 'img/jiaose_s.png', 38, 100, 2);
+player2.setCenterPosition(180, 320);
+console.log(player2.getX());
 
 //TODO  增加zorder 改变元素绘制的先后顺序 影响其层级

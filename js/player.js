@@ -5,24 +5,20 @@ var DF = {
     M: {
         //types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
         types: ['shou', 'zuqiu'],
-        moveSpeed: 0.01,
+        moveSpeed: 0,
         maxPath: 0,
-        pathOffset1: 0.8,
-        pathOffset2: 0.0,
-        pathOffset3: 0.8,
-        scale: 0.5,
+        scale: 0.1,
         maxPathMile: 0,
-        pathOffset4: 1,
-        scaleMile: 0.992,
+        scaleMile: 0.2,
         cutImgTimeFinal: 15,
         cutImgTime: 15,
         cutImgIndex: 0
     },
     P: {
-        pathWidth: 65,
-        moveSpeed: 4,
-        jumpSpeedFinal: 6,
-        jumpSpeed: 5,
+        pathWidth: 0,
+        moveSpeed: 0,
+        jumpSpeedFinal: 4,
+        jumpSpeed: 4,
         gravity: 0.25,
         cutImgTimeFinal: 25,
         cutImgTime: 25,
@@ -38,9 +34,9 @@ var DF = {
 //========================================================================//
 // 创建
 var Player = function() {
-    GAME.Sprite.apply(this, ['player', 'images/jiaose0.png', 56, 122, 1]);
+    GAME.Sprite.apply(this, ['player', 'images/jiaose0.png', 56, 122, 3]);
     var x = winWidth / 2;
-    var y = winHeight - DF.M.maxPath / 5 * 4;
+    var y = winHeight - DF.M.maxPath / 10 * 7;
     this.setCenterPosition(x, y);
     this.last = {
         x: this.center.x,
@@ -159,7 +155,7 @@ Player.prototype.hurtUpdate = function() {
 var Shadow = function() {
     GAME.Sprite.apply(this, ['shadow', 'images/shadow.png', 70, 67, 1]);
     var x = winWidth / 2;
-    var y = winHeight - DF.M.maxPath / 5 * 4 + 67;
+    var y = winHeight - DF.M.maxPath / 10 * 7 + 67;
     this.setCenterPosition(x, y);
     this.last = {
         x: this.center.x,
@@ -206,7 +202,7 @@ Shadow.prototype.move = function() {
 //========================================================================//
 // 创建
 var Monster = function(type, pathIndex, width, height, index) {
-    GAME.Sprite.apply(this, [type + index, 'images/' + type + '0.png', width, height, 3]);
+    GAME.Sprite.apply(this, [type + index, 'images/' + type + '0.png', width, height, 2]);
     var x = winWidth / 6 * (2 * pathIndex - 1);
     var y = winHeight;
     this.setCenterPosition(x, y);
@@ -224,19 +220,20 @@ var Monster = function(type, pathIndex, width, height, index) {
     this.pathIndex = pathIndex;
     this.index = index;
     this.alive = true;
+    this.k = Math.abs((xl - xd1) / (HEIGHT - yl));
 };
 //更新位置
 Monster.prototype.update = function(target) {
     var opt = 'destination-over',
-        distH = target.height * 0.5 + this.height * 0.5,
-        distW = target.width * 0.5 + this.width * 0.5;
+        distH = (target.cur.height + this.cur.height) * 0.5,
+        distW = (target.cur.width + this.cur.width) * 0.5;
     if (target.jumping) {
         if (this.center.y - target.center.y < distH) {}
     } else {
         if (target.center.y - this.center.y > target.height * 0.5) {} else {}
         if (this.center.y - target.center.y < distH && this.center.y - target.center.y > 0) {
             if (Math.abs(this.center.x - target.center.x) < distW) {
-                //this.crash();
+                this.crash();
             }
         }
     }
@@ -249,26 +246,28 @@ Monster.prototype.move = function() {
         delete monsters[this.index];
         this.removeFromGlobal();
     }
+    var x, y;
     switch (this.pathIndex) {
         case 1:
-            this.center.x += DF.M.moveSpeed * k;
+            x = this.center.x + DF.M.moveSpeed * this.k;
             break;
         case 2:
+            x = this.center.x;
             break;
         case 3:
-            this.center.x -= DF.M.moveSpeed * k;
+            x = this.center.x - DF.M.moveSpeed * this.k;
             break;
     }
-    this.center.y -= DF.P.moveSpeed;
+    y = this.center.y - DF.M.moveSpeed;
     if (winHeight - this.center.y > DF.M.maxPath) {
         this.alive = false;
         delete monsters[this.index];
         this.removeFromGlobal();
     } else {
         this.image = this.cutImg();
-        var maxPathY = getScaleY(yl);
-        this.setScale(DF.M.scale, DF.M.scale);
-        this.setCenterPosition(this.center.x, this.center.y);
+        var ks = DF.M.scale + (this.center.y - getScaleY(yl)) * (1 - DF.M.scale) / DF.M.maxPath;
+        this.setScale(ks, ks);
+        this.setCenterPosition(x, y);
     }
 };
 // 切图
@@ -315,16 +314,16 @@ Monster.prototype.crash = function() {
 //========================================================================//
 // 创建
 var AsideMile = function(type, width, height, index) {
-    GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 3]);
+    GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 0]);
     var x = -50;
     var y = winHeight;
     this.setCenterPosition(x, y);
-    this.k = Math.abs(290 / (HEIGHT - yl));
+    this.k = Math.abs(xA / (HEIGHT - yl));
     this.index = index;
 };
 //更新位置
 AsideMile.prototype.fixX = function() {
-    return this.pos.x + (this.width - this.cur.width)/2;
+    return this.pos.x + (this.width - this.cur.width) / 2;
 };
 //更新位置
 AsideMile.prototype.update = function(target) {
@@ -339,14 +338,8 @@ AsideMile.prototype.move = function() {
         delete asideMiles[this.index];
         this.removeFromGlobal();
     } else {
-        var ks = DF.M.scale + (this.center.y - getScaleY(yl)) * (1 - DF.M.scale) / getScaleY(HEIGHT - yl);
-        // var ks = 0.99;
+        var ks = DF.M.scaleMile + (this.center.y - getScaleY(yl)) * (1 - DF.M.scaleMile) / DF.M.maxPathMile;
         this.setScale(ks, ks);
         this.setCenterPosition(x, y);
-        // GAME.context.beginPath();
-        // GAME.context.moveTo(0, 0);
-        // GAME.context.lineTo(x, y);
-        // GAME.context.strokeStyle = "#ffffff";
-        // GAME.context.stroke();
     }
 };

@@ -26,6 +26,7 @@ var DF = {
         gravity: 0.25,
         cutImgTimeFinal: 25,
         cutImgTime: 25,
+        cutImgIndex: 0,
         cutHurtTimeFinal: 25,
         cutHurtTime: 25,
         cutHurtIndex: 0
@@ -37,12 +38,10 @@ var DF = {
 //========================================================================//
 // 创建
 var Player = function() {
-    CANVAS.Sprite.apply(this, ['images/jiaose_s.png', 56, 122]);
-    this.addTo(canvas);
+    GAME.Sprite.apply(this, ['player', 'images/jiaose0.png', 56, 122, 1]);
     var x = winWidth / 2;
     var y = winHeight - DF.M.maxPath / 5 * 4;
-    context.globalCompositeOperation = "source-over";
-    this.setCenterPosition(new CANVAS.Point(x, y));
+    this.setCenterPosition(x, y);
     this.last = {
         x: this.center.x,
         y: this.center.y
@@ -51,6 +50,16 @@ var Player = function() {
         x: this.center.x,
         y: this.center.y
     };
+    this.images = [];
+    var imageLength = 2,
+        imageName = 'jiaose';
+    for (var i = 0; i < imageLength; i++) {
+        var image = new Image();
+        image.width = this.width;
+        image.height = this.height;
+        image.src = 'images/' + imageName + i + '.png';
+        this.images.push(image);
+    }
     this.moving = false;
     this.moveDirect = 0;
     this.jumping = false;
@@ -67,37 +76,39 @@ Player.prototype.update = function() {
         this.jump();
     }
     if (!this.jumping && !this.hurt) {
-        this.cutImg();
+        this.image = this.cutImg();
     }
-    this.refresh('source-over');
 };
 // 切图
 Player.prototype.cutImg = function() {
     if (DF.P.cutImgTime === 0) {
-        this.context.translate(this.width, 0);
-        this.context.scale(-1, 1);
+        DF.P.cutImgIndex++;
+        if (DF.P.cutImgIndex >= 2) {
+            DF.P.cutImgIndex = 0;
+        }
         DF.P.cutImgTime = DF.P.cutImgTimeFinal;
     }
     DF.P.cutImgTime--;
+    return this.images[DF.P.cutImgIndex];
 };
 // Jump
 Player.prototype.jump = function() {
     if (this.jumpDirect == 1) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y - DF.P.jumpSpeed));
+        this.setCenterPosition(this.center.x, this.center.y - DF.P.jumpSpeed);
         DF.P.jumpSpeed -= DF.P.gravity;
         if (DF.P.jumpSpeed <= 0) {
             this.jumpDirect = -1;
         }
     } else if (this.jumpDirect == -1) {
         DF.P.jumpSpeed += DF.P.gravity;
-        this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y + DF.P.jumpSpeed));
+        this.setCenterPosition(this.center.x, this.center.y + DF.P.jumpSpeed);
         if (DF.P.jumpSpeed >= DF.P.jumpSpeedFinal) {
             this.jumpDirect = 0;
         }
     } else {
         this.jumping = false;
         DF.P.jumpSpeed = DF.P.jumpSpeedFinal;
-        this.setCenterPosition(new CANVAS.Point(this.last.x, this.last.y));
+        this.setCenterPosition(this.last.x, this.last.y);
     }
 };
 // Move
@@ -115,9 +126,9 @@ Player.prototype.move = function() {
         }
     }
     if (this.moveDirect > 0 && this.pathIndex < 3) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x + DF.P.moveSpeed, this.center.y));
+        this.setCenterPosition(this.center.x + DF.P.moveSpeed, this.center.y);
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x - DF.P.moveSpeed, this.center.y));
+        this.setCenterPosition(this.center.x - DF.P.moveSpeed, this.center.y);
     } else {
         this.moving = false;
     }
@@ -146,11 +157,10 @@ Player.prototype.hurtUpdate = function() {
 //======================== :: Shadow :: ==================================//
 //========================================================================//
 var Shadow = function() {
-    CANVAS.Sprite.apply(this, ['images/shadow.png', 70, 67]);
-    this.addTo(canvas);
+    GAME.Sprite.apply(this, ['shadow', 'images/shadow.png', 70, 67, 1]);
     var x = winWidth / 2;
     var y = winHeight - DF.M.maxPath / 5 * 4 + 67;
-    this.setCenterPosition(new CANVAS.Point(x, y));
+    this.setCenterPosition(x, y);
     this.last = {
         x: this.center.x,
         y: this.center.y
@@ -168,7 +178,6 @@ Shadow.prototype.update = function() {
     if (this.moving) {
         this.move();
     }
-    this.refresh();
 };
 // Move
 Shadow.prototype.move = function() {
@@ -185,9 +194,9 @@ Shadow.prototype.move = function() {
         }
     }
     if (this.moveDirect > 0 && this.pathIndex < 3) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x + DF.P.moveSpeed, this.center.y));
+        this.setCenterPosition(this.center.x + DF.P.moveSpeed, this.center.y);
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x - DF.P.moveSpeed, this.center.y));
+        this.setCenterPosition(this.center.x - DF.P.moveSpeed, this.center.y);
     } else {
         this.moving = false;
     }
@@ -197,11 +206,10 @@ Shadow.prototype.move = function() {
 //========================================================================//
 // 创建
 var Monster = function(type, pathIndex, width, height, index) {
-    CANVAS.Sprite.apply(this, ['images/' + type + '0.png', width, height]);
-    this.addTo(canvas);
+    GAME.Sprite.apply(this, [type + index, 'images/' + type + '0.png', width, height, 3]);
     var x = winWidth / 6 * (2 * pathIndex - 1);
     var y = winHeight;
-    this.setCenterPosition(new CANVAS.Point(x, y));
+    this.setCenterPosition(x, y);
     this.images = [];
     var imageLength = type === DF.M.types[1] ? 4 : 1;
     for (var i = 0; i < imageLength; i++) {
@@ -245,27 +253,29 @@ Monster.prototype.move = function(opt) {
     if (!this.alive) {
         return false;
         delete monsters[this.index];
+        this.removeFromGlobal();
     }
     switch (this.pathIndex) {
         case 1:
-            this.center.x = this.center.x + DF.M.pathOffset1;
+            this.center.x + DF.M.moveSpeed * k;
             break;
         case 2:
-            this.center.x = this.center.x + DF.M.pathOffset2;
             break;
         case 3:
-            this.center.x = this.center.x - DF.M.pathOffset3;
+            this.center.x -= DF.M.moveSpeed * k;
             break;
     }
     this.center.y -= DF.P.moveSpeed;
     if (winHeight - this.center.y > DF.M.maxPath) {
         this.alive = false;
         delete monsters[this.index];
+        this.removeFromGlobal();
     } else {
         this.image = this.cutImg();
+        var maxTopHeight = getScaleY(yl);
+
         this.setScale(DF.M.scale, DF.M.scale);
-        this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y));
-        this.refresh(opt);
+        this.setCenterPosition(this.center.x, this.center.y);
     }
 };
 // 切图
@@ -288,6 +298,7 @@ Monster.prototype.cutImg = function() {
 Monster.prototype.crash = function() {
     this.alive = false;
     delete monsters[this.index];
+    this.removeFromGlobal();
     if (this.type === DF.M.types[0]) {
         // dialog({
         //     content: 'GIVE ME FIVE!',
@@ -311,11 +322,10 @@ Monster.prototype.crash = function() {
 //========================================================================//
 // 创建
 var AsideMile = function(type, width, height, index) {
-    CANVAS.Sprite.apply(this, ['images/number/' + type + '.png', width, height]);
-    this.addTo(canvas);
+    GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 3]);
     var x = 0;
     var y = winHeight - this.height;
-    this.setCenterPosition(new CANVAS.Point(x, y));
+    this.setCenterPosition(x, y);
     this.index = index;
 };
 //更新位置
@@ -328,9 +338,9 @@ AsideMile.prototype.move = function() {
     this.center.y -= DF.M.moveSpeed;
     if (winHeight - this.center.y > DF.M.maxPathMile) {
         delete asideMiles[this.index];
+        this.removeFromGlobal();
     } else {
         this.setScale(DF.M.scaleMile, DF.M.scaleMile);
-        this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y));
-        this.refresh();
+        this.setCenterPosition(this.center.x, this.center.y);
     }
 };

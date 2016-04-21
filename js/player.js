@@ -272,7 +272,7 @@ Monster.prototype.move = function(opt) {
         this.removeFromGlobal();
     } else {
         this.image = this.cutImg();
-        var maxTopHeight = getScaleY(yl);
+        var maxPathY = getScaleY(yl);
 
         this.setScale(DF.M.scale, DF.M.scale);
         this.setCenterPosition(this.center.x, this.center.y);

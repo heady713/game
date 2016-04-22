@@ -12,7 +12,7 @@ var canvasContainer, canvas, context;
 var player, shadow, monsters = [],
     asideMiles = [];
 var winWidth, winHeight, isGuide = false;
-var startTouchPoint, touchCache = 0.1;
+var startTouchPoint, touchCache = 0.2;
 var startTime,
     refreshDelay = 24,
     gmfCounts = 0;
@@ -103,6 +103,7 @@ var initStage = function() {
 };
 var startGame = function() {
     startTime = new Date().getTime();
+    gmfCounts = 0;
     requestAnimationFrame(loop, canvasContainer);
 };
 //改变窗口尺寸

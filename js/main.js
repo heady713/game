@@ -278,6 +278,16 @@ var dialog = function(options) {
         }, options.delay)
     }
 };
+var popupTip = function(msg) {
+    var id = 'tip' + new Date().getTime();
+    var htmlContent = '<div id="' + id + '" class="crashTip self_center">' + msg + '</div>';
+    $('#gameing').append(htmlContent);
+    var top = $('#' + id).position().top;
+    $('#' + id).css('top', top - winHeight / 4);
+    setTimeout(function() {
+        $('#' + id).remove();
+    }, 1000);
+};
 //========================================================================//
 //============================= :: AJAX :: ===============================//
 //========================================================================//
@@ -387,10 +397,12 @@ var submitInfo = function() {
         success: function(data) {
             // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
-                $('#toastSuccess').show();
-                setTimeout(function() {
-                    $('#toastSuccess').hide();
-                }, 2000);
+                dialog({
+                    content: '提交成功！',
+                    mask: true,
+                    min: true,
+                    delay: 2000
+                });
             }
         }
     });

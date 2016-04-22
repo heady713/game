@@ -280,9 +280,15 @@ Monster.prototype.crash = function() {
     if (this.type === DF.M.types[0]) {
         popupTip('gmf+1', 'fc_or');
         gmfCounts++;
+        if (isPlayMusic) {
+            musicGmf.play();
+        }
     } else {
         startTime -= 1000;
         popupTip('+1s');
+        if (isPlayMusic) {
+            musicCrash.play();
+        }
     }
 };
 //========================================================================//

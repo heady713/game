@@ -1,4 +1,4 @@
-var musicBg,musicGmf;
+var musicBg, musicGmf, musicCrash, isPlayMusic = true;
 var initAudio = function() {
     musicBg = document.createElement("audio");
     musicBg.loop = 'loop';
@@ -7,16 +7,19 @@ var initAudio = function() {
     musicBg.src = 'mp3/bg.mp3';
     document.body.appendChild(musicBg);
     musicGmf = document.createElement("audio");
-    musicGmf.src = 'mp3/bg.mp3';
+    musicGmf.src = 'mp3/good.wav';
     document.body.appendChild(musicGmf);
+    musicCrash = document.createElement("audio");
+    musicCrash.src = 'mp3/crash.wav';
+    document.body.appendChild(musicCrash);
 };
-var playAll = function() {
+var playMusic = function() {
+    isPlayMusic = true;
     musicBg.play();
-    musicGmf.play();
 };
-var pauseAll = function() {
+var pauseMusic = function() {
+    isPlayMusic = false;
     musicBg.pause();
-    musicGmf.pause();
 };
 var muted = function() {
     if (musicBg.muted) {

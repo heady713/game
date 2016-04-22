@@ -12,7 +12,7 @@ var canvasContainer, canvas, context;
 var player, shadow, monsters = [],
     asideMiles = [];
 var winWidth, winHeight, isGuide = false;
-var startTouchPoint, touchCache = 0.2;
+var startTouchPoint, touchCache = 0.35;
 var startTime,
     refreshDelay = 24,
     gmfCounts = 0;

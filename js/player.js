@@ -4,31 +4,25 @@
 var DF = {
     M: {
         //types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
-        types: ['shou', 'zuqiu'],
-        moveSpeed: 3,
+        types: ['shou', 'zuqiu', 'langan'],
+        moveSpeed: 0,
         maxPath: 0,
-        pathOffset1: 0.4,
-        pathOffset2: 0.24,
-        pathOffset3: 0.86,
-        scale: 0.999,
+        scale: 0.2,
         maxPathMile: 0,
-        pathOffset4: 0.9,
-        scaleMile: 0.99,
+        scaleMile: 0.4,
         cutImgTimeFinal: 15,
         cutImgTime: 15,
         cutImgIndex: 0
     },
     P: {
-        pathWidth: 65,
-        moveSpeed: 4,
-        jumpSpeedFinal: 6,
+        pathWidth: 0,
+        moveSpeed: 0,
+        jumpSpeedFinal: 5,
         jumpSpeed: 5,
         gravity: 0.25,
         cutImgTimeFinal: 25,
         cutImgTime: 25,
-        cutHurtTimeFinal: 25,
-        cutHurtTime: 25,
-        cutHurtIndex: 0
+        cutImgIndex: 0
     },
     Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
 };
@@ -37,19 +31,34 @@ var DF = {
 //========================================================================//
 // 创建
 var Player = function() {
-    CANVAS.Sprite.apply(this, ['images/jiaose_s.png', 56, 122]);
-    this.addTo(canvas);
+    GAME.Sprite.apply(this, ['player', 'images/player0.png', 66, 122, 3]);
     var x = winWidth / 2;
-    var y = winHeight - DF.M.maxPath / 5 * 4;
-    this.setCenterPosition(new CANVAS.Point(x, y));
+    var y = winHeight - DF.M.maxPath / 5 * 3;
+    this.setAnchorPoint(0.5, 1);
+    this.setPosition(x, y);
     this.last = {
-        x: this.center.x,
-        y: this.center.y
+        x: this.getPositionX(),
+        y: this.getPositionY()
     };
     this.first = {
-        x: this.center.x,
-        y: this.center.y
+        x: this.getPositionX(),
+        y: this.getPositionY()
     };
+    this.images = [];
+    var imageLength = 2,
+        imageName = 'player';
+    for (var i = 0; i < imageLength; i++) {
+        var image = new Image();
+        image.width = this.width;
+        image.height = this.height;
+        image.src = 'images/' + imageName + i + '.png';
+        this.images.push(image);
+    }
+    var jImage = new Image();
+    jImage.width = this.width;
+    jImage.height = this.height;
+    jImage.src = 'images/player_jump.png';
+    this.images.push(jImage);
     this.moving = false;
     this.moveDirect = 0;
     this.jumping = false;
@@ -63,100 +72,83 @@ Player.prototype.update = function() {
         this.move();
     }
     if (this.jumping) {
+        this.image = this.images[2];
         this.jump();
     }
     if (!this.jumping && !this.hurt) {
-        this.cutImg();
+        this.image = this.cutImg();
     }
-    this.refresh();
 };
 // 切图
 Player.prototype.cutImg = function() {
     if (DF.P.cutImgTime === 0) {
-        this.context.translate(this.width, 0);
-        this.context.scale(-1, 1);
+        DF.P.cutImgIndex++;
+        if (DF.P.cutImgIndex >= 2) {
+            DF.P.cutImgIndex = 0;
+        }
         DF.P.cutImgTime = DF.P.cutImgTimeFinal;
     }
     DF.P.cutImgTime--;
+    return this.images[DF.P.cutImgIndex];
 };
 // Jump
 Player.prototype.jump = function() {
     if (this.jumpDirect == 1) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y - DF.P.jumpSpeed));
+        this.setPositionY(this.getPositionY() - DF.P.jumpSpeed);
         DF.P.jumpSpeed -= DF.P.gravity;
         if (DF.P.jumpSpeed <= 0) {
             this.jumpDirect = -1;
         }
     } else if (this.jumpDirect == -1) {
         DF.P.jumpSpeed += DF.P.gravity;
-        this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y + DF.P.jumpSpeed));
+        this.setPositionY(this.getPositionY() + DF.P.jumpSpeed);
         if (DF.P.jumpSpeed >= DF.P.jumpSpeedFinal) {
             this.jumpDirect = 0;
         }
     } else {
         this.jumping = false;
         DF.P.jumpSpeed = DF.P.jumpSpeedFinal;
-        this.setCenterPosition(new CANVAS.Point(this.last.x, this.last.y));
+        this.setPosition(this.last.x, this.last.y);
     }
 };
 // Move
 Player.prototype.move = function() {
-    if (Math.abs(this.center.x - this.last.x) >= DF.P.pathWidth) {
+    if (Math.abs(this.getPositionX() - this.last.x) >= DF.P.pathWidth) {
         this.moveDirect = 0;
         this.moving = false;
-        this.last.x = this.center.x;
-        if (this.last.x < this.first.x) {
+        this.last.x = this.getPositionX();
+        if (this.last.x < this.first.x && Math.abs(this.last.x - this.first.x) > 0.01) {
             this.pathIndex = 1;
-        } else if (this.last.x > this.first.x) {
+        } else if (this.last.x > this.first.x && Math.abs(this.last.x - this.first.x) > 0.01) {
             this.pathIndex = 3;
         } else {
             this.pathIndex = 2;
         }
     }
     if (this.moveDirect > 0 && this.pathIndex < 3) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x + DF.P.moveSpeed, this.center.y));
+        this.setPositionX(this.getPositionX() + DF.P.moveSpeed);
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x - DF.P.moveSpeed, this.center.y));
+        this.setPositionX(this.getPositionX() - DF.P.moveSpeed);
     } else {
         this.moving = false;
     }
-};
-//受伤
-Player.prototype.hurting = function() {
-    this.hurt = true;
-    var target = this;
-    setTimeout(function() {
-        target.hurt = false;
-    }, 1000);
-};
-//受伤效果
-Player.prototype.hurtUpdate = function() {
-    if (DF.P.cutHurtTime === 0) {
-        if (DF.P.cutHurtIndex === 0) {
-            DF.P.cutHurtIndex = 1;
-        } else {
-            DF.P.cutHurtIndex = 0;
-        }
-        DF.P.cutHurtTime = DF.P.cutImgTimeFinal;
-    }
-    DF.P.cutHurtTime--;
 };
 //========================================================================//
 //======================== :: Shadow :: ==================================//
 //========================================================================//
 var Shadow = function() {
-    CANVAS.Sprite.apply(this, ['images/shadow.png', 70, 67]);
-    this.addTo(canvas);
+    GAME.Sprite.apply(this, ['shadow', 'images/shadow.png', 70, 67, 1]);
     var x = winWidth / 2;
-    var y = winHeight - DF.M.maxPath / 5 * 4 + 67;
-    this.setCenterPosition(new CANVAS.Point(x, y));
+    var y = winHeight - DF.M.maxPath / 5 * 3 + 40;
+    this.setAnchorPoint(0.5, 1);
+    this.setPosition(x, y);
     this.last = {
-        x: this.center.x,
-        y: this.center.y
+        x: this.getPositionX(),
+        y: this.getPositionY()
     };
     this.first = {
-        x: this.center.x,
-        y: this.center.y
+        x: this.getPositionX(),
+        y: this.getPositionY()
     };
     this.moving = false;
     this.moveDirect = 0;
@@ -167,72 +159,41 @@ Shadow.prototype.update = function() {
     if (this.moving) {
         this.move();
     }
-    this.refresh();
 };
 // Move
 Shadow.prototype.move = function() {
-    if (Math.abs(this.center.x - this.last.x) >= DF.P.pathWidth) {
+    if (Math.abs(this.getPositionX() - this.last.x) >= DF.P.pathWidth) {
         this.moveDirect = 0;
         this.moving = false;
-        this.last.x = this.center.x;
-        if (this.last.x < this.first.x) {
+        this.last.x = this.getPositionX();
+        if (this.last.x < this.first.x && Math.abs(this.last.x - this.first.x) > 0.01) {
             this.pathIndex = 1;
-        } else if (this.last.x > this.first.x) {
+        } else if (this.last.x > this.first.x && Math.abs(this.last.x - this.first.x) > 0.01) {
             this.pathIndex = 3;
         } else {
             this.pathIndex = 2;
         }
     }
     if (this.moveDirect > 0 && this.pathIndex < 3) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x + DF.P.moveSpeed, this.center.y));
+        this.setPositionX(this.getPositionX() + DF.P.moveSpeed);
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
-        this.setCenterPosition(new CANVAS.Point(this.center.x - DF.P.moveSpeed, this.center.y));
+        this.setPositionX(this.getPositionX() - DF.P.moveSpeed);
     } else {
         this.moving = false;
     }
 };
-var WIDTH = 720,
-    HEIGHT = 1280;
-var xl = 292,
-    yl = 308,
-    xr = 435;
-var xd1 = 128,
-    xd2 = 592;
-
-function getScaleX(x) {
-    return winWidth * x / WIDTH;
-}
-
-function getScaleY(y) {
-    return winHeight * y / HEIGHT;
-}
-
-function k(x, y, idx) {
-    var x1 = getScaleX(xl);
-    var x2 = getScaleX(xr);
-    var y1 = getScaleY(yl);
-    var p1_x = 0;
-    switch (idx) {
-        case 1:
-            p1_x = getScaleX(xd1);
-        case 2:
-            p1_x = getScaleX(360);
-        case 3:
-            p1_x = getScaleX(xd2);
-    }
-    var p1_y = y1;
-    return (x - p1_x) / (y - p1_y);
-}
 //========================================================================//
 //======================== :: Monster :: =================================//
 //========================================================================//
 // 创建
 var Monster = function(type, pathIndex, width, height, index) {
-    this.self = document.createElement('canvas');
-    this.self.width = this.width = width;
-    this.self.height = this.height = height;
-    this.setCenterX(winWidth / 6 * (2 * pathIndex - 1));
-    this.setCenterY(winHeight);
+    GAME.Sprite.apply(this, [type + index, 'images/' + type + '0.png', width, height, 2]);
+    var x = pathIndex == 1 ? getScaleX(xd1) : (pathIndex == 3 ? getScaleX(xd2) : winWidth / 2);
+    if (type === 'langan') {
+        x = pathIndex == 1 ? winWidth / 3 : winWidth / 3 * 2;
+    }
+    var y = winHeight;
+    this.setPosition(x, y);
     this.images = [];
     var imageLength = type === DF.M.types[1] ? 4 : 1;
     for (var i = 0; i < imageLength; i++) {
@@ -242,38 +203,22 @@ var Monster = function(type, pathIndex, width, height, index) {
         image.src = 'images/' + type + i + '.png';
         this.images.push(image);
     }
-    this.context = this.self.getContext('2d');
-    this.context.drawImage(this.images[0], 0, 0);
-    context.drawImage(this.self, this.self.x, this.self.y);
+    this.image = this.images[0];
     this.type = type;
     this.pathIndex = pathIndex;
     this.index = index;
     this.alive = true;
 };
-Monster.prototype.setCenterX = function(x) {
-    this.centerX = x;
-    this.self.x = x - 1 / 2 * this.width;
-};
-Monster.prototype.setCenterY = function(y) {
-    this.centerY = y;
-    this.self.y = y - 1 / 2 * this.height;
-};
 //更新位置
 Monster.prototype.update = function(target) {
+    var distH = (this.getCurrentHeight()) * 0.5,
+        distW = (this.getCurrentWidth()) * 0.5;
     if (target.jumping) {
-        if (this.self.y - target.center.y < target.height) {
-            context.globalCompositeOperation = "destination-over";
-        }
+        if (this.getPositionY() - target.getPositionY() < target.getCurrentHeight() * 0.5) {}
     } else {
-        if (this.self.y + this.height < target.center.y) {
-            context.globalCompositeOperation = "source-over";
-        } else {
-            context.globalCompositeOperation = "destination-over";
-        }
-        if (this.self.y - target.center.y < target.height && this.self.y - target.center.y > (target.height - 0.5 * this.self.height)) {
-            if (this.self.x > target.center.x && this.self.x - target.center.x < target.width) {
-                this.crash();
-            } else if (this.self.x < target.center.x && target.center.x - this.self.x < this.width / 2) {
+        if (target.getPositionY() - this.getPositionY() > target.getCurrentHeight() * 0.5) {} else {}
+        if (this.getPositionY() - target.getPositionY() < distH && this.getPositionY() - target.getPositionY() > 0) {
+            if (Math.abs(this.getPositionX() - target.getPositionX()) < distW) {
                 this.crash();
             }
         }
@@ -285,40 +230,30 @@ Monster.prototype.move = function() {
     if (!this.alive) {
         return false;
         delete monsters[this.index];
+        this.removeFromGlobal();
     }
-    var kv = k(this.centerX, this.centerY, this.pathIndex);
-    var offsetY = DF.M.moveSpeed;
-    var center_x = this.centerX - offsetY * kv;
-    var center_y = this.centerY - offsetY;
-    this.setCenterX(center_x);
-    this.setCenterY(center_y);
-    if (winHeight - this.self.y > DF.M.maxPath) {
+    var x, y;
+    switch (this.pathIndex) {
+        case 1:
+            x = this.getPositionX() + DF.M.moveSpeed * this.k;
+            break;
+        case 2:
+            x = this.getPositionX();
+            break;
+        case 3:
+            x = this.getPositionX() - DF.M.moveSpeed * this.k;
+            break;
+    }
+    y = this.getPositionY() - DF.M.moveSpeed;
+    if (winHeight - this.getPositionY() > DF.M.maxPath) {
         this.alive = false;
         delete monsters[this.index];
+        this.removeFromGlobal();
     } else {
-        this.context.clearRect(0, 0, this.self.width + 1, this.self.height + 1);
-        this.context.scale(DF.M.scale, DF.M.scale);
-        var image = this.cutImg();
-        this.context.drawImage(image, 0, 0, this.self.width, this.self.height);
-        context.drawImage(this.self, this.self.x, this.self.y);
-        this.width = this.width * DF.M.scale;
-        this.height = this.height * DF.M.scale;
-        switch (this.pathIndex) {
-            case 1:
-                center_x = center_x + this.width * (1 - DF.M.scale);
-                this.setCenterX(center_x);
-                center_y = center_y + this.height * (1 - DF.M.scale);
-                this.setCenterY(center_y);
-                break;
-            case 2:
-                break;
-            case 3:
-                center_x = center_x + this.width * (1 - DF.M.scale);
-                this.setCenterX(center_x);
-                center_y = center_y + this.height * (1 - DF.M.scale);
-                this.setCenterY(center_y);
-                break;
-        }
+        this.image = this.cutImg();
+        var ks = DF.M.scale + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scale) / getScaleY(HEIGHT - yl);
+        this.setScale(ks, ks);
+        this.setPosition(x, y);
     }
 };
 // 切图
@@ -341,22 +276,19 @@ Monster.prototype.cutImg = function() {
 Monster.prototype.crash = function() {
     this.alive = false;
     delete monsters[this.index];
+    this.removeFromGlobal();
     if (this.type === DF.M.types[0]) {
-        // dialog({
-        //     content: 'GIVE ME FIVE!',
-        //     mask: true,
-        //     min: true,
-        //     delay: 2000
-        // });
+        popupTip('gmf+1', 'fc_or');
         gmfCounts++;
+        if (isPlayMusic) {
+            musicGmf.play();
+        }
     } else {
-        player.hurting();
-        // dialog({
-        //     content: 'YOU HURT!',
-        //     mask: true,
-        //     min: true,
-        //     delay: 2000
-        // });
+        startTime -= 1000;
+        popupTip('+1s');
+        if (isPlayMusic) {
+            musicCrash.play();
+        }
     }
 };
 //========================================================================//
@@ -364,18 +296,8 @@ Monster.prototype.crash = function() {
 //========================================================================//
 // 创建
 var AsideMile = function(type, width, height, index) {
-    this.self = document.createElement('canvas');
-    this.self.width = this.width = width;
-    this.self.height = this.height = height;
-    this.self.x = this.x = -80;
-    this.self.y = this.y = winHeight - this.height;
-    this.image = new Image();
-    this.image.width = this.width;
-    this.image.height = this.height;
-    this.image.src = 'images/number/' + type + '.png';
-    this.context = this.self.getContext('2d');
-    this.context.drawImage(this.image, 0, 0);
-    context.drawImage(this.self, this.self.x, this.self.y);
+    GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 0]);
+    this.k = Math.abs((getScaleX(xA) - getScaleX(3)) / (winHeight - getScaleY(yl)));
     this.index = index;
 };
 //更新位置
@@ -384,21 +306,15 @@ AsideMile.prototype.update = function(target) {
 };
 //MOVE
 AsideMile.prototype.move = function() {
-    var offset = this.width * (1 - DF.M.scale);
-    this.self.x = this.self.x + DF.M.pathOffset4;
-    this.self.x += offset;
-    this.self.y -= DF.M.moveSpeed;
-    if (winHeight - this.self.y > DF.M.maxPathMile) {
-        this.self.x = this.x;
-        this.self.y = this.y;
+    var x, y;
+    x = this.getPositionX() + DF.M.moveSpeed * this.k;
+    y = this.getPositionY() - DF.M.moveSpeed;
+    if (winHeight - this.getPositionY() > DF.M.maxPathMile) {
         delete asideMiles[this.index];
+        this.removeFromGlobal();
     } else {
-        this.context.clearRect(0, 0, this.self.width, this.self.height);
-        this.context.scale(DF.M.scaleMile, DF.M.scale);
-        this.context.drawImage(this.image, 0, 0, this.self.width, this.self.height);
-        context.globalCompositeOperation = "destination-over";
-        context.drawImage(this.self, this.self.x, this.self.y);
-        this.width = this.width * DF.M.scale;
-        this.height = this.height * DF.M.scale;
+        var ks = DF.M.scaleMile + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile) / getScaleY(HEIGHT - yl);
+        this.setScale(ks, ks);
+        this.setPosition(x, y);
     }
 };

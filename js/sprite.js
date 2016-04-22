@@ -1,82 +1,136 @@
-var CANVAS = CANVAS || {};
+var GAME = GAME || {};
 // ===================================================
-// =====================::POINT::=====================
+// =====================::GLOBAL::====================
 // ===================================================
-CANVAS.Point = function(x, y) {
-    this.x = isNaN(x) ? 0 : x;
-    this.y = isNaN(y) ? 0 : y;
-}
-CANVAS.Point.prototype.clone = function() {
-    return new CANVAS.Point(this.x, this.y);
+var WIDTH = 720,
+    HEIGHT = 1280;
+var xl = 310,
+    xlc = 334.5,
+    yl = 308,
+    xr = 408,
+    xA = 290;
+var xd1 = 128,
+    xd2 = 592;
+var getScaleX = function(x) {
+    return winWidth * x / WIDTH;
 };
-CANVAS.Point.prototype.setPosition = function(x, y) {
-    this.x = isNaN(x) ? this.x : x;
-    this.y = isNaN(y) ? this.y : y;
+var getScaleY = function(y) {
+    return winHeight * y / HEIGHT;
 };
-CANVAS.Point.prototype.equals = function(point) {
-    return this.x == point.x && this.y == point.y;
+/// ==================================================
+GAME.children = {};
+GAME.childCount = 0;
+GAME.updateChildren = function() {
+    if (GAME.childCount > 0) {
+        GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
+        var zorderList = [];
+        for (var k in GAME.children) {
+            var child = GAME.children[k];
+            zorderList.push({
+                sprite: child,
+                zorder: child.zorder
+            });
+        };
+        zorderList.sort(function(a, b) {
+            return a.zorder >= b.zorder ? 1 : -1;
+        });
+        for (var i = 0; i < zorderList.length; ++i) {
+            var child = zorderList[i].sprite;
+            GAME.context.drawImage(child.image, child.pos.x, child.pos.y, child.width * child.scale.x, child.height * child.scale.y);
+        };
+    }
 };
-CANVAS.Point.prototype.toString = function() {
-    return "{x:" + this.x + " , y:" + this.y + "}";
+GAME.getDistance = function(pointA, pointB) {
+    return Math.sqrt(Math.pow(pointA.x - pointB.x, 2), Math.pow(pointA.y - pointB.y, 2))
 };
 // ===================================================
 // =====================::Sprite::====================
 // ===================================================
-CANVAS.Sprite = function(src, width, height) {
-    for (var key in CANVAS.Sprite.prototype) {
-        this.__proto__[key] = CANVAS.Sprite.prototype[key];
+GAME.Sprite = function(tag, src, width, height, zorder) {
+        for (var key in GAME.Sprite.prototype) {
+            this.__proto__[key] = GAME.Sprite.prototype[key];
+        }
+        this.tag = tag;
+        this.zorder = zorder || 0;
+        this.src = src;
+        this.width = width;
+        this.height = height;
+        //锚点
+        this.anchor = {
+            x: 0.5,
+            y: 0.5
+        };
+        //左上点坐标
+        this.pos = {
+            x: 0,
+            y: 0
+        };
+        //缩放比
+        this.scale = {
+            x: 1,
+            y: 1
+        };
+        //Sprite的图像
+        this.image = new Image();
+        this.image.src = this.src;
+        var self = this;
+        this.image.onload = function() {
+            GAME.children[tag] = self;
+            GAME.childCount++;
+            GAME.updateChildren();
+        };
     }
-    this.canvas = document.createElement('canvas');
-    this.canvas.x = this.x = 0;
-    this.canvas.y = this.y = 0;
-    this.context = this.canvas.getContext('2d');
-    this.canvas.widht = this.width = width;
-    this.canvas.height = this.height = height;
-    this.center = {
-        x: this.x + 0.5 * this.width,
-        y: this.y + 0.5 * this.height
-    };
-    this.parentCanvas = null;
-    this.image = new Image();
-    this.image.src = src;
-    var self = this;
-    this.image.onload = function() {
-        self.context.drawImage(self.image, 0, 0);
-        self.refresh();
-    };
-};
-CANVAS.Sprite.prototype.addTo = function(canvas) {
-    this.parentCanvas = canvas;
-};
-CANVAS.Sprite.prototype.refresh = function() {
-    if (this.parentCanvas) {
-        var context = this.parentCanvas.getContext('2d');
-        context.globalCompositeOperation = "source-over";
-        context.drawImage(this.canvas, this.x, this.y);
+    //移除自身
+GAME.Sprite.prototype.removeFromGlobal = function() {
+    if (GAME.children[this.tag] == undefined) {
+        console.log("tag:", this.tag, "isnot exists");
+        return;
     }
+    delete GAME.children[this.tag];
+    GAME.childCount--;
 };
-CANVAS.Sprite.prototype.setPosition = function(point) {
-    this.canvas.x = this.x = point.x;
-    this.canvas.y = this.y = point.y;
-    this.center.x = this.x + 0.5 * this.width;
-    this.center.y = this.y + 0.5 * this.height;
+//设置锚点
+GAME.Sprite.prototype.setAnchorPoint = function(x, y) {
+    if (x > 1 || x < 0 || y > 1 || y < 0) {
+        console.log("AnchorPoint must between [0, 1]");
+    };
+    this.anchor.x = x;
+    this.anchor.y = y;
 };
-CANVAS.Sprite.prototype.setCenterPosition = function(point) {
-    this.center.x = point.x;
-    this.center.y = point.y;
-    this.canvas.x = this.x = point.x - 0.5 * this.width;
-    this.canvas.y = this.y = point.y - 0.5 * this.height;
+//设置锚点坐标 即间接设定左上点坐标
+GAME.Sprite.prototype.setPosition = function(x, y) {
+    this.pos.x = x - this.anchor.x * this.width * this.scale.x;
+    this.pos.y = y - this.anchor.y * this.height * this.scale.y;
 };
-CANVAS.Sprite.prototype.setScale = function(scaleX, scaleY) {
-    this.context = this.canvas.getContext('2d');
-    this.context.clearRect(0, 0, this.canvas.widht, this.canvas.height);
-    this.context.scale(scaleX, scaleY);
-    this.context.drawImage(this.image, 0, 0);
-    var newWidth = this.width * scaleX;
-    var newHeight = this.height * scaleX;
-    var offsetX = (this.width - newWidth) / 4;
-    var offsetY = (this.height - newHeight) / 4;
-    this.width = newWidth;
-    this.height = newHeight;
-    this.setCenterPosition(new CANVAS.Point(this.center.x, this.center.y));
+//设置锚点X坐标 即间接设定左上点坐标
+GAME.Sprite.prototype.setPositionX = function(x) {
+    this.pos.x = x - this.anchor.x * this.width * this.scale.x;
 };
+//设置锚点Y坐标 即间接设定左上点坐标
+GAME.Sprite.prototype.setPositionY = function(y) {
+    this.pos.y = y - this.anchor.y * this.height * this.scale.y;
+};
+//获取锚点X坐标
+GAME.Sprite.prototype.getPositionX = function() {
+    return this.pos.x + this.anchor.x * this.width * this.scale.x;
+};
+//获取锚点Y坐标
+GAME.Sprite.prototype.getPositionY = function() {
+    return this.pos.y + this.anchor.y * this.height * this.scale.y;
+};
+//根据锚点进行缩放，由于drawImage是以左上点为原点，所以这里需要根据相应情况对左上点进行偏移
+GAME.Sprite.prototype.setScale = function(scaleX, scaleY) {
+    var delta_x = this.width * (this.scale.x - scaleX) * this.anchor.x;
+    var delta_y = this.height * (this.scale.y - scaleY) * this.anchor.y;
+    this.pos.x += delta_x;
+    this.pos.y += delta_y;
+    this.scale.x = scaleX;
+    this.scale.y = scaleY;
+};
+//
+GAME.Sprite.prototype.getCurrentWidth = function() {
+    return this.width * this.scale.x;
+}
+GAME.Sprite.prototype.getCurrentHeight = function() {
+    return this.height * this.scale.y;
+}

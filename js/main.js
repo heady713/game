@@ -12,14 +12,15 @@ var canvasContainer, canvas, context;
 var player, shadow, monsters = [],
     asideMiles = [];
 var winWidth, winHeight, isGuide = false;
-var startTouchPoint, touchCache = 0.1;
-var startTime, countDown = 60000,
+var startTouchPoint, touchCache = 0.35;
+var startTime,
     refreshDelay = 24,
     gmfCounts = 0;
 var stepLength = 2000;
 // 初始化页面
 $(function() {
-    //loadPlayerCnt();
+    loadPlayerCnt();
+    initAudio();
     $('#submitPwd').on('touchstart', function() {
         var pwd = $('#password').val();
         if (pwd && pwd.length > 0) {
@@ -30,6 +31,10 @@ $(function() {
         $('#gameBefore').hide();
         $('#gameing').show();
         initStage();
+        stopPropagation(event);
+    });
+    $('#gameBefore').on('touchstart', '.present', function(event) {
+        $('#activity').show();
         stopPropagation(event);
     });
     $('body').on('touchstart touchmove', function(event) {
@@ -44,7 +49,6 @@ $(function() {
     });
     $('#gameAfter').on('touchstart', '#btnReStart', function(event) {
         $('#gameAfter').hide();
-        countDown = 60000;
         resetStage(); //重置舞台
         startGame();
         stopPropagation(event);
@@ -99,6 +103,7 @@ var initStage = function() {
 };
 var startGame = function() {
     startTime = new Date().getTime();
+    gmfCounts = 0;
     requestAnimationFrame(loop, canvasContainer);
 };
 //改变窗口尺寸
@@ -109,17 +114,24 @@ var resizeHandler = function() {
 var resetStage = function() {
     winWidth = $(canvasContainer).width();
     winHeight = $(canvasContainer).height();
-    DF.M.maxPath = winHeight / 80 * 61;
-    DF.M.maxPathMile = winHeight / 80 * 61;
-    if (canvas) {
-        canvasContainer.removeChild(canvas);
+    DF.M.maxPath = getScaleY(HEIGHT - yl);
+    DF.M.maxPathMile = getScaleY(HEIGHT - yl);
+    DF.M.moveSpeed = winHeight * 0.009;
+    DF.P.moveSpeed = winHeight * 0.006;
+    var k = Math.abs((getScaleX(xl) - getScaleX(xd1)) / (winHeight - getScaleY(yl)));
+    DF.P.pathWidth = DF.M.maxPath / 10 * 7 * k;
+    if (GAME.canvas) {
+        canvasContainer.removeChild(GAME.canvas);
     }
-    canvas = document.createElement('canvas');
-    canvas.width = winWidth;
-    canvas.height = winHeight;
-    canvas.style.position = "absolute";
-    context = canvas.getContext("2d");
-    canvasContainer.appendChild(canvas);
+    GAME.canvas = document.createElement('canvas');
+    GAME.canvas.width = winWidth;
+    GAME.canvas.height = winHeight;
+    GAME.context = GAME.canvas.getContext('2d');
+    canvasContainer.appendChild(GAME.canvas);
+    GAME.context.clearRect(0, 0, GAME.canvas.width, GAME.canvas.height);
+    document.getElementById('timer').innerText = '';
+    document.getElementById('miles').innerText = '';
+    GAME.children = {};
     player = null;
     shadow = null;
     monsters = [];
@@ -154,19 +166,15 @@ var loop = function() {
     }
     document.getElementById('timer').innerText = formatMilli(runingTime);
     document.getElementById('miles').innerText = 'GMF: ' + gmfCounts;
-    if (isContinue) {;
-        if (!player.hurt) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-            shadow.update();
-            player.update()
-            renderMonster();
-            renderAsideMile();
-        } else {
-            player.hurtUpdate();
-        }
+    if (isContinue) {
+        shadow.update();
+        player.update()
+        renderMonster();
+        renderAsideMile();
+        GAME.updateChildren();
         requestAnimationFrame(loop);
     } else {
-        finishGame((runingTime / 1000).toFixed(1), gmfCounts);
+        finishGame(formatMilli(runingTime), gmfCounts);
     }
 };
 var nextMonster = false,
@@ -179,11 +187,19 @@ var renderMonster = function() {
         nextMonster = false;
     }
     if (!nextMonster) {
-        var randomTime = getRoundVal(1000, 3000);
-        var pathIndex = getRoundVal(1, 2);
+        var randomTime = getRoundVal(500, 1000);
         var type = getRoundVal(0, DF.M.types.length - 1);
+        var pathIndex;
+        if (type === 2) {
+            pathIndex = getRoundVal(0, 1) === 0 ? 1 : 3;
+            temp = new Monster(DF.M.types[type], pathIndex, winWidth / 3 * 2, winWidth / 3, monIndex);
+            temp.k = Math.abs((getScaleX(xlc) - winHeight / 3) / (winHeight - getScaleY(yl)));
+        } else {
+            pathIndex = getRoundVal(1, 2);
+            temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);
+            temp.k = Math.abs((getScaleX(xl) - getScaleX(xd1)) / (winHeight - getScaleY(yl)));
+        }
         nextMonTime = currTime + randomTime;
-        temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);
         monsters[monIndex] = temp;
         nextMonster = true;
         monIndex++;
@@ -204,6 +220,8 @@ var renderAsideMile = function() {
     if (!nextAsideMile) {
         nextMileTime = currTime + stepLength;
         var temp = new AsideMile(DF.Miles[mileIndex], 100, 100, mileIndex);
+        temp.setAnchorPoint(1, 0);
+        temp.setPosition(-10, winHeight);
         asideMiles[mileIndex] = temp;
         nextAsideMile = true;
     }
@@ -266,11 +284,24 @@ var dialog = function(options) {
         }, options.delay)
     }
 };
+var popupTip = function(msg, f) {
+    if (!f) {
+        f = 'fc_re';
+    }
+    var id = 'tip' + new Date().getTime();
+    var htmlContent = '<div id="' + id + '" class="crashTip self_center ' + f + '">' + msg + '</div>';
+    $('#gameing').append(htmlContent);
+    var top = $('#' + id).position().top;
+    $('#' + id).css('top', top - winHeight / 4);
+    setTimeout(function() {
+        $('#' + id).remove();
+    }, 1000);
+};
 //========================================================================//
 //============================= :: AJAX :: ===============================//
 //========================================================================//
 //var service = 'http://ijita.me/game/';
-var service = 'http://localhost:8080/wechat_game/game/server/';
+var service = 'server/';
 var executeAjax = function(opt) {
     $.ajax({
         url: opt.url,
@@ -320,10 +351,11 @@ var loadPlayerCnt = function() {
 // 游戏结束
 var finishGame = function(timeCount, gmfCount) {
     var uid = $.fn.cookie('uid');
+    var timeTik = parseFloat(timeCount.replace('\'', '.'));
     executeAjax({
         url: service + 'finish.php',
         data: {
-            total_time: timeCount,
+            total_time: timeTik,
             gmf_times: gmfCount,
             uid: uid
         },
@@ -333,8 +365,10 @@ var finishGame = function(timeCount, gmfCount) {
                 $.fn.cookie('uid', data.uid, {
                     expires: 7
                 });
-                document.getElementById('timeCount').innerText = formatMilli(timeCount);
+                document.getElementById('timeCount').innerText = timeCount;
                 document.getElementById('gmfCount').innerText = gmfCount;
+                document.getElementById('bestTime').innerText = data.total_time;
+                document.getElementById('gmfCountAll').innerText = data.gmf_times;
                 document.getElementById('currentRank').innerText = data.rank_id;
                 document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id) / (data.pcnt) * 100);
                 $('#gameAfter').show();
@@ -375,10 +409,12 @@ var submitInfo = function() {
         success: function(data) {
             // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
-                $('#toastSuccess').show();
-                setTimeout(function() {
-                    $('#toastSuccess').hide();
-                }, 2000);
+                dialog({
+                    content: '提交成功！',
+                    mask: true,
+                    min: true,
+                    delay: 2000
+                });
             }
         }
     });

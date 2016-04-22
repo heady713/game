@@ -5,6 +5,7 @@ var GAME = GAME || {};
 var WIDTH = 720,
     HEIGHT = 1280;
 var xl = 310,
+    xlc = 334.5,
     yl = 308,
     xr = 408,
     xA = 290;
@@ -42,45 +43,44 @@ GAME.updateChildren = function() {
 GAME.getDistance = function(pointA, pointB) {
     return Math.sqrt(Math.pow(pointA.x - pointB.x, 2), Math.pow(pointA.y - pointB.y, 2))
 };
-
 // ===================================================
 // =====================::Sprite::====================
 // ===================================================
 GAME.Sprite = function(tag, src, width, height, zorder) {
-    for (var key in GAME.Sprite.prototype) {
-        this.__proto__[key] = GAME.Sprite.prototype[key];
+        for (var key in GAME.Sprite.prototype) {
+            this.__proto__[key] = GAME.Sprite.prototype[key];
+        }
+        this.tag = tag;
+        this.zorder = zorder || 0;
+        this.src = src;
+        this.width = width;
+        this.height = height;
+        //锚点
+        this.anchor = {
+            x: 0.5,
+            y: 0.5
+        };
+        //左上点坐标
+        this.pos = {
+            x: 0,
+            y: 0
+        };
+        //缩放比
+        this.scale = {
+            x: 1,
+            y: 1
+        };
+        //Sprite的图像
+        this.image = new Image();
+        this.image.src = this.src;
+        var self = this;
+        this.image.onload = function() {
+            GAME.children[tag] = self;
+            GAME.childCount++;
+            GAME.updateChildren();
+        };
     }
-    this.tag = tag;
-    this.zorder = zorder || 0;
-    this.src = src;
-    this.width = width;
-    this.height = height;
-    //锚点
-    this.anchor = {
-        x: 0.5,
-        y: 0.5
-    };
-    //左上点坐标
-    this.pos = {
-        x: 0,
-        y: 0
-    };
-    //缩放比
-    this.scale = {
-        x: 1,
-        y: 1
-    };
-    //Sprite的图像
-    this.image = new Image();
-    this.image.src = this.src;
-    var self = this;
-    this.image.onload = function() {
-        GAME.children[tag] = self;
-        GAME.childCount++;
-        GAME.updateChildren();
-    };
-}
-//移除自身
+    //移除自身
 GAME.Sprite.prototype.removeFromGlobal = function() {
     if (GAME.children[this.tag] == undefined) {
         console.log("tag:", this.tag, "isnot exists");

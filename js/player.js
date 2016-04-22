@@ -4,12 +4,12 @@
 var DF = {
     M: {
         //types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
-        types: ['shou', 'zuqiu'],
+        types: ['shou', 'zuqiu', 'langan'],
         moveSpeed: 0,
         maxPath: 0,
-        scale: 0.1,
+        scale: 0.2,
         maxPathMile: 0,
-        scaleMile: 0.2,
+        scaleMile: 0.4,
         cutImgTimeFinal: 15,
         cutImgTime: 15,
         cutImgIndex: 0
@@ -17,15 +17,12 @@ var DF = {
     P: {
         pathWidth: 0,
         moveSpeed: 0,
-        jumpSpeedFinal: 4,
-        jumpSpeed: 4,
+        jumpSpeedFinal: 5,
+        jumpSpeed: 5,
         gravity: 0.25,
         cutImgTimeFinal: 25,
         cutImgTime: 25,
-        cutImgIndex: 0,
-        cutHurtTimeFinal: 25,
-        cutHurtTime: 25,
-        cutHurtIndex: 0
+        cutImgIndex: 0
     },
     Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100']
 };
@@ -36,7 +33,8 @@ var DF = {
 var Player = function() {
     GAME.Sprite.apply(this, ['player', 'images/jiaose0.png', 56, 122, 3]);
     var x = winWidth / 2;
-    var y = winHeight - DF.M.maxPath / 10 * 7;
+    var y = winHeight - DF.M.maxPath / 5 * 3;
+    this.setAnchorPoint(0.5, 1);
     this.setPosition(x, y);
     this.last = {
         x: this.getPositionX(),
@@ -121,7 +119,6 @@ Player.prototype.move = function() {
             this.pathIndex = 2;
         }
     }
-
     if (this.moveDirect > 0 && this.pathIndex < 3) {
         this.setPositionX(this.getPositionX() + DF.P.moveSpeed);
     } else if (this.moveDirect < 0 && this.pathIndex > 1) {
@@ -130,33 +127,14 @@ Player.prototype.move = function() {
         this.moving = false;
     }
 };
-//受伤
-Player.prototype.hurting = function() {
-    this.hurt = true;
-    var target = this;
-    setTimeout(function() {
-        target.hurt = false;
-    }, 1000);
-};
-//受伤效果
-Player.prototype.hurtUpdate = function() {
-    if (DF.P.cutHurtTime === 0) {
-        if (DF.P.cutHurtIndex === 0) {
-            DF.P.cutHurtIndex = 1;
-        } else {
-            DF.P.cutHurtIndex = 0;
-        }
-        DF.P.cutHurtTime = DF.P.cutImgTimeFinal;
-    }
-    DF.P.cutHurtTime--;
-};
 //========================================================================//
 //======================== :: Shadow :: ==================================//
 //========================================================================//
 var Shadow = function() {
     GAME.Sprite.apply(this, ['shadow', 'images/shadow.png', 70, 67, 1]);
     var x = winWidth / 2;
-    var y = winHeight - DF.M.maxPath / 10 * 7 + 67;
+    var y = winHeight - DF.M.maxPath / 5 * 3 + 40;
+    this.setAnchorPoint(0.5, 1);
     this.setPosition(x, y);
     this.last = {
         x: this.getPositionX(),
@@ -205,6 +183,9 @@ Shadow.prototype.move = function() {
 var Monster = function(type, pathIndex, width, height, index) {
     GAME.Sprite.apply(this, [type + index, 'images/' + type + '0.png', width, height, 2]);
     var x = pathIndex == 1 ? getScaleX(xd1) : (pathIndex == 3 ? getScaleX(xd2) : winWidth / 2);
+    if (type === 'langan') {
+        x = pathIndex == 1 ? winWidth / 3 : winWidth / 3 * 2;
+    }
     var y = winHeight;
     this.setPosition(x, y);
     this.images = [];
@@ -221,19 +202,17 @@ var Monster = function(type, pathIndex, width, height, index) {
     this.pathIndex = pathIndex;
     this.index = index;
     this.alive = true;
-    this.k = Math.abs((getScaleX(xl) - getScaleX(xd1)) / (winHeight - getScaleY(yl)));
 };
 //更新位置
 Monster.prototype.update = function(target) {
-    var opt = 'destination-over',
-        distH = (target.getCurrentHeight() + this.getCurrentHeight()) * 0.5,
-        distW = (target.getCurrentWidth() + this.getCurrentWidth()) * 0.5;
+    var distH = (this.getCurrentHeight()) * 0.5,
+        distW = (this.getCurrentWidth()) * 0.5;
     if (target.jumping) {
-        if (this.getPositionY() - target.getPositionY() < distH) {}
+        if (this.getPositionY() - target.getPositionY() < target.getCurrentHeight() * 0.5) {}
     } else {
         if (target.getPositionY() - this.getPositionY() > target.getCurrentHeight() * 0.5) {} else {}
         if (this.getPositionY() - target.getPositionY() < distH && this.getPositionY() - target.getPositionY() > 0) {
-            if (Math.abs(this.getPositionX()- target.getPositionX()) < distW) {
+            if (Math.abs(this.getPositionX() - target.getPositionX()) < distW) {
                 this.crash();
             }
         }
@@ -301,13 +280,8 @@ Monster.prototype.crash = function() {
         // });
         gmfCounts++;
     } else {
-        player.hurting();
-        // dialog({
-        //     content: 'YOU HURT!',
-        //     mask: true,
-        //     min: true,
-        //     delay: 2000
-        // });
+        startTime -= 1000;
+        popupTip('+1s');
     }
 };
 //========================================================================//
@@ -315,7 +289,7 @@ Monster.prototype.crash = function() {
 //========================================================================//
 // 创建
 var AsideMile = function(type, width, height, index) {
-    GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 3]);
+    GAME.Sprite.apply(this, [type + index, 'images/number/' + type + '.png', width, height, 0]);
     this.k = Math.abs((getScaleX(xA) - getScaleX(3)) / (winHeight - getScaleY(yl)));
     this.index = index;
 };
@@ -332,7 +306,7 @@ AsideMile.prototype.move = function() {
         delete asideMiles[this.index];
         this.removeFromGlobal();
     } else {
-        var ks = DF.M.scale + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scale) / getScaleY(HEIGHT - yl);
+        var ks = DF.M.scaleMile + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile) / getScaleY(HEIGHT - yl);
         this.setScale(ks, ks);
         this.setPosition(x, y);
     }

@@ -13,7 +13,7 @@ var player, shadow, monsters = [],
     asideMiles = [];
 var winWidth, winHeight, isGuide = false;
 var startTouchPoint, touchCache = 0.1;
-var startTime, countDown = 60000,
+var startTime,
     refreshDelay = 24,
     gmfCounts = 0;
 var stepLength = 2000;
@@ -48,7 +48,6 @@ $(function() {
     });
     $('#gameAfter').on('touchstart', '#btnReStart', function(event) {
         $('#gameAfter').hide();
-        countDown = 60000;
         resetStage(); //重置舞台
         startGame();
         stopPropagation(event);
@@ -115,9 +114,10 @@ var resetStage = function() {
     winHeight = $(canvasContainer).height();
     DF.M.maxPath = getScaleY(HEIGHT - yl);
     DF.M.maxPathMile = getScaleY(HEIGHT - yl);
-    DF.M.moveSpeed = winHeight * 0.01;
-    DF.P.moveSpeed = winHeight * 0.01;
-    DF.P.pathWidth = winWidth * 0.18;
+    DF.M.moveSpeed = winHeight * 0.009;
+    DF.P.moveSpeed = winHeight * 0.006;
+    var k = Math.abs((getScaleX(xl) - getScaleX(xd1)) / (winHeight - getScaleY(yl)));
+    DF.P.pathWidth = DF.M.maxPath / 5 * 3 * k;
     if (GAME.canvas) {
         canvasContainer.removeChild(GAME.canvas);
     }
@@ -160,16 +160,11 @@ var loop = function() {
     }
     document.getElementById('timer').innerText = formatMilli(runingTime);
     document.getElementById('miles').innerText = 'GMF: ' + gmfCounts;
-    if (isContinue) {;
-        if (!player.hurt) {
-            // context.clearRect(0, 0, canvas.width, canvas.height);
-            shadow.update();
-            player.update()
-            renderMonster();
-            renderAsideMile();
-        } else {
-            player.hurtUpdate();
-        }
+    if (isContinue) {
+        shadow.update();
+        player.update()
+        renderMonster();
+        renderAsideMile();
         GAME.updateChildren();
         requestAnimationFrame(loop);
     } else {
@@ -186,11 +181,19 @@ var renderMonster = function() {
         nextMonster = false;
     }
     if (!nextMonster) {
-        var randomTime = getRoundVal(1000, 3000);
-        var pathIndex = getRoundVal(1, 2);
+        var randomTime = getRoundVal(500, 1000);
         var type = getRoundVal(0, DF.M.types.length - 1);
+        var pathIndex;
+        if (type === 2) {
+            pathIndex = getRoundVal(0, 1) === 0 ? 1 : 3;
+            temp = new Monster(DF.M.types[type], pathIndex, winWidth / 3 * 2, winWidth / 3, monIndex);
+            temp.k = Math.abs((getScaleX(xlc) - winHeight / 3) / (winHeight - getScaleY(yl)));
+        } else {
+            pathIndex = getRoundVal(1, 2);
+            temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);
+            temp.k = Math.abs((getScaleX(xl) - getScaleX(xd1)) / (winHeight - getScaleY(yl)));
+        }
         nextMonTime = currTime + randomTime;
-        temp = new Monster(DF.M.types[type], pathIndex, 90, 90, monIndex);
         monsters[monIndex] = temp;
         nextMonster = true;
         monIndex++;
@@ -274,6 +277,16 @@ var dialog = function(options) {
             dialog.hide();
         }, options.delay)
     }
+};
+var popupTip = function(msg) {
+    var id = 'tip' + new Date().getTime();
+    var htmlContent = '<div id="' + id + '" class="crashTip self_center">' + msg + '</div>';
+    $('#gameing').append(htmlContent);
+    var top = $('#' + id).position().top;
+    $('#' + id).css('top', top - winHeight / 4);
+    setTimeout(function() {
+        $('#' + id).remove();
+    }, 1000);
 };
 //========================================================================//
 //============================= :: AJAX :: ===============================//
@@ -384,10 +397,12 @@ var submitInfo = function() {
         success: function(data) {
             // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
-                $('#toastSuccess').show();
-                setTimeout(function() {
-                    $('#toastSuccess').hide();
-                }, 2000);
+                dialog({
+                    content: '提交成功！',
+                    mask: true,
+                    min: true,
+                    delay: 2000
+                });
             }
         }
     });

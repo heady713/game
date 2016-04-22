@@ -31,7 +31,7 @@ var DF = {
 //========================================================================//
 // 创建
 var Player = function() {
-    GAME.Sprite.apply(this, ['player', 'images/jiaose0.png', 56, 122, 3]);
+    GAME.Sprite.apply(this, ['player', 'images/player0.png', 66, 122, 3]);
     var x = winWidth / 2;
     var y = winHeight - DF.M.maxPath / 5 * 3;
     this.setAnchorPoint(0.5, 1);
@@ -46,7 +46,7 @@ var Player = function() {
     };
     this.images = [];
     var imageLength = 2,
-        imageName = 'jiaose';
+        imageName = 'player';
     for (var i = 0; i < imageLength; i++) {
         var image = new Image();
         image.width = this.width;
@@ -54,6 +54,11 @@ var Player = function() {
         image.src = 'images/' + imageName + i + '.png';
         this.images.push(image);
     }
+    var jImage = new Image();
+    jImage.width = this.width;
+    jImage.height = this.height;
+    jImage.src = 'images/player_jump.png';
+    this.images.push(jImage);
     this.moving = false;
     this.moveDirect = 0;
     this.jumping = false;
@@ -67,6 +72,7 @@ Player.prototype.update = function() {
         this.move();
     }
     if (this.jumping) {
+        this.image = this.images[2];
         this.jump();
     }
     if (!this.jumping && !this.hurt) {
@@ -272,12 +278,7 @@ Monster.prototype.crash = function() {
     delete monsters[this.index];
     this.removeFromGlobal();
     if (this.type === DF.M.types[0]) {
-        // dialog({
-        //     content: 'GIVE ME FIVE!',
-        //     mask: true,
-        //     min: true,
-        //     delay: 2000
-        // });
+        popupTip('gmf+1', 'fc_or');
         gmfCounts++;
     } else {
         startTime -= 1000;

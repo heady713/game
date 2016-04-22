@@ -20,6 +20,7 @@ var stepLength = 2000;
 // 初始化页面
 $(function() {
     //loadPlayerCnt();
+    initAudio();
     $('#submitPwd').on('touchstart', function() {
         var pwd = $('#password').val();
         if (pwd && pwd.length > 0) {
@@ -117,7 +118,7 @@ var resetStage = function() {
     DF.M.moveSpeed = winHeight * 0.009;
     DF.P.moveSpeed = winHeight * 0.006;
     var k = Math.abs((getScaleX(xl) - getScaleX(xd1)) / (winHeight - getScaleY(yl)));
-    DF.P.pathWidth = DF.M.maxPath / 5 * 3 * k;
+    DF.P.pathWidth = DF.M.maxPath / 10 * 7 * k;
     if (GAME.canvas) {
         canvasContainer.removeChild(GAME.canvas);
     }
@@ -278,9 +279,12 @@ var dialog = function(options) {
         }, options.delay)
     }
 };
-var popupTip = function(msg) {
+var popupTip = function(msg, f) {
+    if (!f) {
+        f = 'fc_re';
+    }
     var id = 'tip' + new Date().getTime();
-    var htmlContent = '<div id="' + id + '" class="crashTip self_center">' + msg + '</div>';
+    var htmlContent = '<div id="' + id + '" class="crashTip self_center ' + f + '">' + msg + '</div>';
     $('#gameing').append(htmlContent);
     var top = $('#' + id).position().top;
     $('#' + id).css('top', top - winHeight / 4);

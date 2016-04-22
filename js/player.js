@@ -281,12 +281,7 @@ Monster.prototype.crash = function() {
         gmfCounts++;
     } else {
         startTime -= 1000;
-        // dialog({
-        //     content: 'YOU HURT!',
-        //     mask: true,
-        //     min: true,
-        //     delay: 2000
-        // });
+        popupTip('+1s');
     }
 };
 //========================================================================//

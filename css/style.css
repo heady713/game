@@ -99,12 +99,16 @@ html, body {
     color: #7acc5a;
 }
 
-.background .scoreBox h1 {
+.crashTip {
     font: bold 3em/3em 'Microsoft Yahei', Helvetica, Arial, sans-serif;
+    position: absolute;
     text-align: center;
-    width: 100%;
-    color: #fff;
-    display: none;
+    width: 3em;
+    height: 3em;
+    color: #ff0000;
+    transition: top 1s cubic-bezier(.06, .71, .33, .96);
+    -webkit-transition: top 1s cubic-bezier(.06, .71, .33, .96);
+    text-shadow: 0px 0px 5px #fff;
 }
 
 
@@ -318,11 +322,12 @@ html, body {
 #activity .mask {
     opacity: 0.7;
 }
+
 #activity .container {
     position: absolute;
     width: 100%;
     height: 100%;
-    top:0px;
+    top: 0px;
     z-index: -1;
 }
 
@@ -370,7 +375,7 @@ html, body {
     margin: 10px 0 0 10px;
 }
 
-.dialog_tab .dialog_tab_bd p a{
+.dialog_tab .dialog_tab_bd p a {
     color: #CECB30;
     text-decoration: underline;
 }

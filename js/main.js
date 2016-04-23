@@ -12,7 +12,9 @@ var canvasContainer, canvas, context;
 var player, shadow, monsters = [],
     asideMiles = [];
 var winWidth, winHeight, isGuide = false;
-var startTouchPoint, touchCache = 0.25;
+var startTouchPoint;
+var touchCacheX = 0.25,
+    touchCacheY = 0.2;
 var startTime,
     refreshDelay = 24,
     gmfCounts = 0;
@@ -70,15 +72,16 @@ var initStage = function() {
     window.onresize = resizeHandler;
     resetStage(); //重置舞台
     var myTouch = util.toucher(document.getElementById('gameing'));
+    var len = winHeight > winWidth ? winWidth : winHeight;
     myTouch.on('swipe', function(e) {
-        if (e.moveX >= winWidth * touchCache) { //right
+        if (e.moveX >= len * touchCacheX) { //right
             if (!player.moving) {
                 player.moving = true;
                 player.moveDirect = 1;
                 shadow.moving = true;
                 shadow.moveDirect = 1;
             }
-        } else if (e.moveX <= -winWidth * touchCache) { //left
+        } else if (e.moveX <= -len * touchCacheX) { //left
             if (!player.moving) {
                 player.moving = true;
                 player.moveDirect = -1;
@@ -86,7 +89,7 @@ var initStage = function() {
                 shadow.moveDirect = -1;
             }
         }
-        if (e.moveY <= -winWidth * touchCache) { //up
+        if (e.moveY <= -len * touchCacheY) { //up
             if (!player.jumping) {
                 player.jumping = true;
                 player.jumpDirect = 1;

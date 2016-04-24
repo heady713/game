@@ -10,8 +10,8 @@ var DF = {
         scale: 0.2,
         maxPathMile: 0,
         scaleMile: 0.4,
-        cutImgTimeFinal: 15,
-        cutImgTime: 15,
+        cutImgTimeFinal: 18,
+        cutImgTime: 18,
         cutImgIndex: 0
     },
     P: {
@@ -20,8 +20,8 @@ var DF = {
         jumpSpeedFinal: 5,
         jumpSpeed: 5,
         gravity: 0.25,
-        cutImgTimeFinal: 25,
-        cutImgTime: 4,
+        cutImgTimeFinal: 12,
+        cutImgTime: 12,
         cutImgIndex: 0
     },
     Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100'],

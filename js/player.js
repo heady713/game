@@ -395,7 +395,7 @@ AsideCheer.prototype.move = function() {
         }
         this.removeFromGlobal();
     } else {
-        var ks = DF.M.scaleMile + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile) / getScaleY(HEIGHT - yl);
+        var ks = DF.M.scaleMile*1.5 + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile*1.5) / getScaleY(HEIGHT - yl);
         this.setScale(ks, ks);
         this.setPosition(x, y);
     }

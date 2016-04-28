@@ -32,6 +32,8 @@ $(function() {
         $('#gameBefore').hide();
         $('#gameing').show();
         initStage();
+
+        musicBg.play();
         stopPropagation(event);
     });
     $('#gameBefore').on('touchstart', '.present', function(event) {
@@ -180,6 +182,7 @@ var loop = function() {
         }
         requestAnimationFrame(loop);
     } else {
+        musicBg.pause();
         finishGame(formatMilli(runingTime), gmfCounts);
     }
 };
@@ -367,7 +370,6 @@ var popupTip = function(msg, f) {
 //========================================================================//
 //============================= :: AJAX :: ===============================//
 //========================================================================//
-//var service = 'http://ijita.me/game/';
 var service = 'server/';
 var executeAjax = function(opt) {
     $.ajax({

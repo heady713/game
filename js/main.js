@@ -32,7 +32,6 @@ $(function() {
         $('#gameBefore').hide();
         $('#gameing').show();
         initStage();
-
         musicBg.play();
         stopPropagation(event);
     });
@@ -53,7 +52,9 @@ $(function() {
     $('#gameAfter').on('touchstart', '#btnReStart', function(event) {
         $('#gameAfter').hide();
         resetStage(); //重置舞台
-        musicBg.play();
+        if (!musicBg.muted) {
+            musicBg.play();
+        }
         startGame();
         stopPropagation(event);
     }).on('touchstart', '#submitInfo', function(event) {

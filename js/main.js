@@ -53,6 +53,7 @@ $(function() {
     $('#gameAfter').on('touchstart', '#btnReStart', function(event) {
         $('#gameAfter').hide();
         resetStage(); //重置舞台
+        musicBg.play();
         startGame();
         stopPropagation(event);
     }).on('touchstart', '#submitInfo', function(event) {

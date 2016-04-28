@@ -52,7 +52,7 @@ $(function() {
     $('#gameAfter').on('touchstart', '#btnReStart', function(event) {
         $('#gameAfter').hide();
         resetStage(); //重置舞台
-        if (!musicBg.muted) {
+        if (isPlayMusic) {
             musicBg.play();
         }
         startGame();

@@ -195,7 +195,7 @@ var renderMonster = function() {
     }
     if (!nextMonster && !noMoreMonster) {
         var randomTime = getRoundVal(500, 1000);
-        var type = getRoundVal(0, DF.M.types.length + 4);
+        var type = getRoundVal(0, DF.M.types.length + 3);
         if (type > DF.M.types.length - 1) {
             type = 0;
         }

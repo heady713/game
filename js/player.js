@@ -321,6 +321,7 @@ Monster.prototype.crash = function() {
                 musicCrash.play();
             }
             DF.M.moveSpeed = winHeight * 0.003;
+            DF.P.cutImgTimeFinal = 24;
             GameStatus = 2;
             nextMileTime += 1000;
             nextCheerTime += 1000;
@@ -328,7 +329,8 @@ Monster.prototype.crash = function() {
             setTimeout(function() {
                 DF.M.moveSpeed = winHeight * 0.009;
                 GameStatus = 0;
-            }, 1000);
+                DF.P.cutImgTimeFinal = 12;
+            }, 1000 * DF.AddTime);
         }
     }
 };
@@ -385,7 +387,7 @@ AsideCheer.prototype.move = function() {
             break;
     }
     y = this.getPositionY() - DF.M.moveSpeed / 3 * 2;
-    if (winHeight - this.getPositionY() > DF.M.maxPathMile) {
+    if (winHeight - this.getPositionY() > DF.M.maxPathMile-10) {
         if (this.pathIndex == 1) {
             delete asideCheers[this.index];
         } else {

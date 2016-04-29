@@ -24,7 +24,13 @@ var DF = {
         cutImgIndex: 0
     },
     Miles: ['05', '10', '15', '20', '25', '30', '35', '40', '45', '50', '55', '60', '65', '70', '75', '80', '85', '90', '95', '100'],
-    AddTime: 1
+    AddTime: 1,
+    MatchInfo: {
+        zuqiu: '足球比赛信息',
+        lanqiu: '篮球比赛信息',
+        langan: '跨栏比赛信息',
+        feibiao: '飞镖比赛信息'
+    }
 };
 //========================================================================//
 //======================== :: Player :: ==================================//
@@ -190,7 +196,7 @@ Shadow.prototype.move = function() {
 var Monster = function(type, pathIndex, width, height, index) {
     var zindex = 2;
     if (type === DF.M.types[4] || type === 'zhongdian') {
-        zindex = 4;
+        zindex = cheerIndex + 100;
     }
     GAME.Sprite.apply(this, [type + index, 'images/' + type + '0.png', width, height, zindex]);
     var x = pathIndex == 1 ? getScaleX(xd1) : (pathIndex == 3 ? getScaleX(xd2) : winWidth / 2);
@@ -330,6 +336,12 @@ Monster.prototype.crash = function() {
                 GameStatus = 0;
                 DF.P.cutImgTimeFinal = 12;
             }, 1000 * DF.AddTime);
+            dialog({
+                content: DF.MatchInfo[this.type],
+                min: true,
+                mask: true,
+                delay: 2000
+            });
         }
     }
 };
@@ -365,7 +377,7 @@ AsideMile.prototype.move = function() {
 //========================================================================//
 // 创建
 var AsideCheer = function(type, pathIndex, width, height, index) {
-    GAME.Sprite.apply(this, ['jiayou_' + pathIndex + '_' + index, 'images/jiayou_' + type + '.png', width, height, 1]);
+    GAME.Sprite.apply(this, ['jiayou_' + pathIndex + '_' + index, 'images/jiayou_' + type + '.png', width, height, index]);
     this.k = Math.abs((getScaleX(xA) - getScaleX(3)) / (winHeight - getScaleY(yl)));
     this.pathIndex = pathIndex;
     this.index = index;
@@ -386,7 +398,7 @@ AsideCheer.prototype.move = function() {
             break;
     }
     y = this.getPositionY() - DF.M.moveSpeed / 3 * 2;
-    if (winHeight - this.getPositionY() > DF.M.maxPathMile-getScaleY(20)) {
+    if (winHeight - this.getPositionY() > DF.M.maxPathMile - getScaleY(20)) {
         if (this.pathIndex == 1) {
             delete asideCheers[this.index];
         } else {

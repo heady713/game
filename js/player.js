@@ -3,7 +3,6 @@
 //========================================================================//
 var DF = {
     M: {
-        //types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
         types: ['shou', 'zuqiu', 'langan', 'lanqiu', 'feibiao'],
         moveSpeed: 0,
         maxPath: 0,
@@ -223,7 +222,7 @@ Monster.prototype.update = function(target) {
     var distH = this.getCurrentHeight() * 0.5,
         distW = this.getCurrentWidth() * 0.5;
     if (this.type === 'zhongdian') {
-        if (this.getPositionY() - target.first.y < distH / 4) {
+        if (this.getPositionY() - target.first.y < distH / 2.5) {
             GameStatus = 3;
         }
     }
@@ -387,7 +386,7 @@ AsideCheer.prototype.move = function() {
             break;
     }
     y = this.getPositionY() - DF.M.moveSpeed / 3 * 2;
-    if (winHeight - this.getPositionY() > DF.M.maxPathMile - 10) {
+    if (winHeight - this.getPositionY() > DF.M.maxPathMile-getScaleY(20)) {
         if (this.pathIndex == 1) {
             delete asideCheers[this.index];
         } else {
@@ -395,7 +394,7 @@ AsideCheer.prototype.move = function() {
         }
         this.removeFromGlobal();
     } else {
-        var ks = DF.M.scaleMile * 1.5 + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile * 1.5) / getScaleY(HEIGHT - yl);
+        var ks = DF.M.scaleMile + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile) / getScaleY(HEIGHT - yl);
         this.setScale(ks, ks);
         this.setPosition(x, y);
     }

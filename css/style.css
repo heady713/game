@@ -202,8 +202,7 @@ audio {
 }
 
 .dialog .content {
-    margin: 5%;
-    text-align: center;
+    margin: 10%;
     font: normal 2em/1em 'Microsoft Yahei', Arial, sans-serif;
     color: #fff;
 }

@@ -3,7 +3,6 @@
 //========================================================================//
 var DF = {
     M: {
-        //types: ['Coin', 'Badminton', 'Baseball', 'Basketball', 'Soccer', 'Tennis', 'Volleyball'],
         types: ['shou', 'zuqiu', 'langan', 'lanqiu', 'feibiao'],
         moveSpeed: 0,
         maxPath: 0,
@@ -223,7 +222,7 @@ Monster.prototype.update = function(target) {
     var distH = this.getCurrentHeight() * 0.5,
         distW = this.getCurrentWidth() * 0.5;
     if (this.type === 'zhongdian') {
-        if (this.getPositionY() - target.first.y < distH / 4) {
+        if (this.getPositionY() - target.first.y < distH / 2.5) {
             GameStatus = 3;
         }
     }

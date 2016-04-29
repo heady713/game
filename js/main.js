@@ -18,7 +18,7 @@ var winWidth, winHeight, guideStatus = 0,
 var startTouchPoint, touchCacheX = 0.15,
     touchCacheY = 0.2;
 var startTime, pauseTime, gmfCounts = 0,
-    stepLength = 2000;
+    stepLength = 500;
 // 初始化页面
 $(function() {
     loadPlayerCnt();

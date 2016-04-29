@@ -122,7 +122,7 @@ var showGuide = function(index) {
         $('#guide').show();
     } else {
         var container = $('#guide').find('.container');
-        container.removeClass('guide_bg_2').find('article').html('GIME ME FIVE！<br/>给市运会加油！<br/>开始把！');
+        container.removeClass('guide_bg_2').addClass('guide_bg_1').find('article').html('GIME ME FIVE！<br/>给市运会加油！<br/>');
         $('#guide').show();
     }
     $('#guide').data('index', index);
@@ -135,25 +135,27 @@ var initStage = function() {
     var myTouch = util.toucher(document.getElementById('gameing'));
     var len = winHeight > winWidth ? winWidth : winHeight;
     myTouch.on('swipe', function(e) {
-        if (e.moveX >= len * touchCacheX) { //right
-            if (!player.moving && !player.jumping) {
-                player.moving = true;
-                player.moveDirect = 1;
-                shadow.moving = true;
-                shadow.moveDirect = 1;
+        if (isGuide) {
+            if (e.moveX >= len * touchCacheX) { //right
+                if (!player.moving && !player.jumping) {
+                    player.moving = true;
+                    player.moveDirect = 1;
+                    shadow.moving = true;
+                    shadow.moveDirect = 1;
+                }
+            } else if (e.moveX <= -len * touchCacheX) { //left
+                if (!player.moving && !player.jumping) {
+                    player.moving = true;
+                    player.moveDirect = -1;
+                    shadow.moving = true;
+                    shadow.moveDirect = -1;
+                }
             }
-        } else if (e.moveX <= -len * touchCacheX) { //left
-            if (!player.moving && !player.jumping) {
-                player.moving = true;
-                player.moveDirect = -1;
-                shadow.moving = true;
-                shadow.moveDirect = -1;
-            }
-        }
-        if (e.moveY <= -len * touchCacheY) { //up
-            if (!player.jumping) {
-                player.jumping = true;
-                player.jumpDirect = 1;
+            if (e.moveY <= -len * touchCacheY) { //up
+                if (!player.jumping) {
+                    player.jumping = true;
+                    player.jumpDirect = 1;
+                }
             }
         }
         stopPropagation(e);

@@ -326,7 +326,7 @@ var renderAsideMile = function() {
     if (!nextAsideMile) {
         if (DF.Miles[mileIndex]) {
             if (DF.Miles[mileIndex] === '100') {
-                var finish = new Monster('zhongdian', 2, winWidth * 1.3, winWidth*1.3*1.22, cheerIndex+100);
+                var finish = new Monster('zhongdian', 2, winWidth * 1.3, winWidth * 1.3 * 1.22, cheerIndex + 100);
                 finish.setAnchorPoint(0.5, 1);
                 monsters[monIndex] = finish;
                 noMoreMonster = true;

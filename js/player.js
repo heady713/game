@@ -31,7 +31,7 @@ var DF = {
 //========================================================================//
 // 创建
 var Player = function() {
-    GAME.Sprite.apply(this, ['player', 'images/player0.png', DF.P.pathWidth, DF.P.pathWidth * 2, 3]);
+    GAME.Sprite.apply(this, ['player', 'images/player0.png', DF.P.pathWidth, DF.P.pathWidth * 2, 4]);
     var x = winWidth / 2;
     var y = winHeight - DF.M.maxPath / 10 * 7;
     this.setAnchorPoint(0.5, 1);
@@ -138,7 +138,7 @@ Player.prototype.move = function() {
 //======================== :: Shadow :: ==================================//
 //========================================================================//
 var Shadow = function() {
-    GAME.Sprite.apply(this, ['shadow', 'images/shadow.png', DF.P.pathWidth + 10, DF.P.pathWidth + 10, 1]);
+    GAME.Sprite.apply(this, ['shadow', 'images/shadow.png', DF.P.pathWidth + 10, DF.P.pathWidth + 10, 2]);
     var x = winWidth / 2;
     var y = winHeight - DF.M.maxPath / 10 * 7 + 40;
     this.setAnchorPoint(0.5, 1);
@@ -365,7 +365,7 @@ AsideMile.prototype.move = function() {
 //========================================================================//
 // 创建
 var AsideCheer = function(type, pathIndex, width, height, index) {
-    GAME.Sprite.apply(this, ['jiayou_' + pathIndex + '_' + index, 'images/jiayou_' + type + '.png', width, height, index]);
+    GAME.Sprite.apply(this, ['jiayou_' + pathIndex + '_' + index, 'images/jiayou_' + type + '.png', width, height, 1]);
     this.k = Math.abs((getScaleX(xA) - getScaleX(3)) / (winHeight - getScaleY(yl)));
     this.pathIndex = pathIndex;
     this.index = index;

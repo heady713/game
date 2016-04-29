@@ -551,7 +551,7 @@ var submitInfo = function() {
         });
         return false;
     }
-    if (userName === '') {
+    if (userName === '' || userName.length > 16) {
         dialog({
             content: '请填写您的信息以便我们能联系到您！',
             mask: true,

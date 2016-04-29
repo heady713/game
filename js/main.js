@@ -18,7 +18,7 @@ var winWidth, winHeight, guideStatus = 0,
 var startTouchPoint, touchCacheX = 0.15,
     touchCacheY = 0.2;
 var startTime, pauseTime, gmfCounts = 0,
-    stepLength = 1800;
+    stepLength = 180;
 // 初始化页面
 $(function() {
     loadPlayerCnt();
@@ -328,7 +328,7 @@ var renderAsideMile = function() {
     if (!nextAsideMile) {
         if (DF.Miles[mileIndex]) {
             if (DF.Miles[mileIndex] === '100') {
-                var finish = new Monster('zhongdian', 2, winWidth * 1.3, winWidth * 1.3 * 1.22, cheerIndex + 100);
+                var finish = new Monster('zhongdian', 2, getScaleX(720)*1.2, getScaleY(882)*1.2, cheerIndex + 100);
                 finish.setAnchorPoint(0.5, 1);
                 monsters[monIndex] = finish;
                 noMoreMonster = true;

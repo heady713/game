@@ -527,7 +527,7 @@ var finishGame = function(timeCount, gmfCount) {
                 $.fn.cookie('uid', data.uid, {
                     expires: 120
                 });
-                document.getElementById('uid').innerText = uid;
+                document.getElementById('uid').innerText = data.uid;
                 document.getElementById('timeCount').innerText = timeCount;
                 document.getElementById('gmfCount').innerText = gmfCount;
                 document.getElementById('bestTime').innerText = data.total_time;

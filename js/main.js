@@ -13,10 +13,10 @@ var player, shadow, monsters = [],
     asideMiles = [],
     asideCheers = [],
     asideCheers2 = [];
-var winWidth, winHeight, isGuide = false;
+var winWidth, winHeight, guideStatus = 0;
 var startTouchPoint, touchCacheX = 0.15,
     touchCacheY = 0.2;
-var startTime, gmfCounts = 0,
+var startTime, pauseTime, gmfCounts = 0,
     stepLength = 2000;
 // 初始化页面
 $(function() {
@@ -63,11 +63,12 @@ $(function() {
     });
 });
 //引导页
-var firstGuide = function() {
-    musicBg.play();
+var showGuide = function(index) {
+    // musicBg.play();
     $('#guide').on('touchstart', function() {
         $(this).hide();
-        startGame();
+        GameStatus = 0;
+        guideStatus = 2;
     }).show();
 };
 // 初始化舞台
@@ -169,9 +170,15 @@ window.requestAnimationFrame = window.__requestAnimationFrame ||
 // 循环
 var loop = function() {
     currTime = new Date().getTime();
-    var runingTime = currTime - startTime;
-    document.getElementById('timer').innerText = formatMilli(runingTime);
-    document.getElementById('miles').innerText = gmfCounts;
+    if (guideStatus == 2 && pauseTime > 0) {
+        startTime += currTime - pauseTime + 100;
+        pauseTime = 0;
+    }
+    if (guideStatus != 1) {
+        var runingTime = currTime - startTime;
+        document.getElementById('timer').innerText = formatMilli(runingTime);
+        document.getElementById('miles').innerText = gmfCounts;
+    }
     if (GameStatus != 3) {
         shadow.update();
         player.update();

@@ -242,13 +242,16 @@ Monster.prototype.update = function(target) {
             }
         }
     }
-    if (!isGuide) {
-        var guideH = this.getCurrentHeight() * 2,
+    if (guideStatus == 0) {
+        var guideH = this.getCurrentHeight(),
             guideW = this.getCurrentWidth();
         if (this.getPositionY() - target.getPositionY() < guideH && this.getPositionY() - target.getPositionY() > 0) {
-            if (Math.abs(this.getPositionX() - target.getPositionX()) < guideW) {
-                // GameStatus = 1;
-            }
+            // if (Math.abs(this.getPositionX() - target.getPositionX()) < guideW) {
+            GameStatus = 1;
+            pauseTime = new Date().getTime();
+            showGuide(1);
+            guideStatus = 1;
+            // }
         }
     }
     this.move();

@@ -360,7 +360,7 @@ var renderAsideCheer = function() {
     }
     if (!nextAsideCheer) {
         nextCheerTime = currTime + stepLength / 4;
-        var temp = new AsideCheer(getRoundVal(0, 1) === 0 ? 1 : 2, 1, 90, 160, cheerIndex);
+        var temp = new AsideCheer(getRoundVal(0, 1) === 0 ? (getRoundVal(0, 1) === 0?1:3) : (getRoundVal(0, 1) === 0?2:4), 1, 90, 160, cheerIndex);
         temp.setAnchorPoint(1, 1);
         var x = getRoundVal(0, 1) === 0 ? 0 : -20;
         temp.setPosition(x, winHeight);
@@ -382,7 +382,7 @@ var renderAsideCheer2 = function() {
     }
     if (!nextAsideCheer2) {
         nextCheerTime2 = currTime + stepLength / 4;
-        var temp = new AsideCheer(getRoundVal(0, 1) === 0 ? 3 : 4, 2, 90, 160, cheerIndex2);
+        var temp = new AsideCheer(getRoundVal(0, 1) === 0 ? (getRoundVal(0, 1) === 0?3:4) : (getRoundVal(0, 1) === 0?1:2), 2, 90, 160, cheerIndex2);
         temp.setAnchorPoint(0, 1);
         var x = getRoundVal(0, 1) === 0 ? 20 : 0;
         temp.setPosition(winWidth + x, winHeight);

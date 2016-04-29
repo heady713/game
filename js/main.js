@@ -62,6 +62,12 @@ $(function() {
         submitInfo();
         event.preventDefault();
     });
+    $('.dialog_navbar').on('touchstart', '.dialog_navbar_item', function(event) {
+        $(this).siblings('.dialog_navbar_item').removeClass('selected')
+        $(this).addClass('selected');
+        $(this).parent().siblings('div').hide();
+        $(this).parent().siblings('div').eq($(this).index()).show();
+    });
 });
 //引导页
 var showGuide = function(index) {
@@ -331,7 +337,7 @@ var renderAsideMile = function() {
     if (!nextAsideMile) {
         if (DF.Miles[mileIndex]) {
             if (DF.Miles[mileIndex] === '100') {
-                var finish = new Monster('zhongdian', 2, getScaleX(720)*1.2, getScaleY(882)*1.2, cheerIndex + 100);
+                var finish = new Monster('zhongdian', 2, getScaleX(720) * 1.2, getScaleY(882) * 1.2, cheerIndex + 100);
                 finish.setAnchorPoint(0.5, 1);
                 monsters[monIndex] = finish;
                 noMoreMonster = true;

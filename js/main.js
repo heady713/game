@@ -247,7 +247,9 @@ var loop = function() {
         requestAnimationFrame(loop);
     } else {
         musicBg.pause();
-        musicWin.play();
+        if (isPlayMusic) {
+            musicWin.play();
+        }
         finishGame(formatMilli(runingTime), gmfCounts);
     }
 };

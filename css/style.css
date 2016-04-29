@@ -237,7 +237,10 @@ audio {
 .guide article {
     font: normal 2em/2em 'Microsoft Yahei', Arial, sans-serif;
     color: #fff;
+    width: 100%;
+    height: 50%;
     text-align: center;
+    margin-left: .3em;
 }
 
 .self_center {
@@ -274,7 +277,7 @@ audio {
 .gameAfter .container .resultBox {
     background: url(../images/success.png) no-repeat;
     width: 250px;
-    height: 143px;
+    height: 80px;
 }
 
 .gameAfter .container .header {

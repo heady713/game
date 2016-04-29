@@ -387,7 +387,7 @@ AsideCheer.prototype.move = function() {
             break;
     }
     y = this.getPositionY() - DF.M.moveSpeed / 3 * 2;
-    if (winHeight - this.getPositionY() > DF.M.maxPathMile - 10) {
+    if (winHeight - this.getPositionY() > DF.M.maxPathMile-getScaleY(20)) {
         if (this.pathIndex == 1) {
             delete asideCheers[this.index];
         } else {
@@ -395,7 +395,7 @@ AsideCheer.prototype.move = function() {
         }
         this.removeFromGlobal();
     } else {
-        var ks = DF.M.scaleMile * 1.5 + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile * 1.5) / getScaleY(HEIGHT - yl);
+        var ks = DF.M.scaleMile + (this.getPositionY() - getScaleY(yl)) * (1 - DF.M.scaleMile) / getScaleY(HEIGHT - yl);
         this.setScale(ks, ks);
         this.setPosition(x, y);
     }

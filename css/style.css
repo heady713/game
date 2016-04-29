@@ -42,10 +42,10 @@ html, body {
     position: absolute;
     right: 0px;
     top: 0px;
-    width: 100px;
-    height: 100px;
+    width: 72px;
+    height: 72px;
     z-index: 2;
-    background: url(../images/avtivity.png) no-repeat;
+    background: url(../images/avtivity.png) no-repeat top right;
 }
 
 .background .header {

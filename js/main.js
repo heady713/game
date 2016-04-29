@@ -14,8 +14,8 @@ var player, shadow, monsters = [],
     asideCheers = [],
     asideCheers2 = [];
 var winWidth, winHeight, guideStatus = 0,
-    isGuide = false;
-var startTouchPoint, touchCacheX = 0.15,
+    isGuide = true;
+var startTouchPoint, touchCacheX = 0.12,
     touchCacheY = 0.2;
 var startTime, pauseTime, gmfCounts = 0,
     stepLength = 1800;
@@ -103,6 +103,7 @@ var showGuide = function(index) {
                 nextMonTime = currTime + 1000;
                 isGuide = true;
                 guideStatus = -1;
+                startTime = new Date().getTime();
             } else {
                 nextMonTime = currTime + 3000;
                 setTimeout(function() {
@@ -199,9 +200,13 @@ var resetStage = function() {
     player = null;
     shadow = null;
     monsters = [];
+    asideMiles = [];
+    asideCheers = [];
+    asideCheers2 = []
+    mileIndex = 0;
     mileIndex = 0;
     cheerIndex = 1;
-    asideMiles = [];
+    cheerIndex2 = 1;
     shadow = new Shadow();
     player = new Player();
 };
@@ -326,7 +331,7 @@ var renderAsideMile = function() {
     if (!nextAsideMile) {
         if (DF.Miles[mileIndex]) {
             if (DF.Miles[mileIndex] === '100') {
-                var finish = new Monster('zhongdian', 2, winWidth * 1.3, winWidth * 1.3 * 1.22, cheerIndex + 100);
+                var finish = new Monster('zhongdian', 2, winWidth * 1.3, winWidth * 1.3 * 1.22, monIndex);
                 finish.setAnchorPoint(0.5, 1);
                 monsters[monIndex] = finish;
                 noMoreMonster = true;
@@ -419,7 +424,7 @@ var dialog = function(options) {
     var dialog = $('#dialog');
     if (options.min) {
         dialog.css({
-            top: '10%',
+            top: '0%',
             height: '35%'
         });
     }
@@ -431,9 +436,6 @@ var dialog = function(options) {
         dialog.find('.mask').show();
     } else {
         dialog.find('.mask').hide();
-    }
-    if (!options.hasClose) {
-        dialog.css('background-image', 'url(' + options.bgImg + ')');
     }
     dialog.find('.content').html(options.content);
     dialog.show()

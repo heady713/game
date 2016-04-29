@@ -108,16 +108,18 @@ audio {
 .background .scoreBox aside {
     position: absolute;
     font: bold 2em/1em 'Microsoft Yahei', Helvetica, Arial, sans-serif;
-    margin: 5%;
 }
 
 .background .scoreBox .timer {
-    right: 0px;
-    color: #ff0000;
+    top: 115%;
+    width: 15%;
+    color: #7acc5a;
+    text-align: center;
 }
 
 .background .scoreBox .miles {
     left: 0px;
+    margin: 5%;
     color: #FF8319;
     padding-left: 30px;
     height: 24px;

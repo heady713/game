@@ -32,6 +32,7 @@ $(function() {
         $('#gameBefore').hide();
         $('#gameing').show();
         initStage();
+        musicBg.play();
         stopPropagation(event);
     });
     $('#gameBefore').on('touchstart', '.present', function(event) {
@@ -51,6 +52,9 @@ $(function() {
     $('#gameAfter').on('touchstart', '#btnReStart', function(event) {
         $('#gameAfter').hide();
         resetStage(); //重置舞台
+        if (isPlayMusic) {
+            musicBg.play();
+        }
         startGame();
         stopPropagation(event);
     }).on('touchstart', '#submitInfo', function(event) {
@@ -122,7 +126,7 @@ var resetStage = function() {
     winHeight = $(canvasContainer).height();
     DF.M.maxPath = getScaleY(HEIGHT - yl - 25);
     DF.M.maxPathMile = getScaleY(HEIGHT - yl - 25);
-    DF.M.moveSpeed = winHeight * 0.009;
+    DF.M.moveSpeed = winHeight * 0.0068;
     DF.P.moveSpeed = winHeight * 0.006;
     var k = Math.abs((getScaleX(xl) - getScaleX(xd1)) / (winHeight - getScaleY(yl)));
     DF.P.pathWidth = DF.M.maxPath / 10 * 6 * k;
@@ -180,6 +184,7 @@ var loop = function() {
         }
         requestAnimationFrame(loop);
     } else {
+        musicBg.pause();
         finishGame(formatMilli(runingTime), gmfCounts);
     }
 };
@@ -195,7 +200,7 @@ var renderMonster = function() {
     }
     if (!nextMonster && !noMoreMonster) {
         var randomTime = getRoundVal(500, 1000);
-        var type = getRoundVal(0, DF.M.types.length + 4);
+        var type = getRoundVal(0, DF.M.types.length + 3);
         if (type > DF.M.types.length - 1) {
             type = 0;
         }
@@ -367,7 +372,6 @@ var popupTip = function(msg, f) {
 //========================================================================//
 //============================= :: AJAX :: ===============================//
 //========================================================================//
-//var service = 'http://ijita.me/game/';
 var service = 'server/';
 var executeAjax = function(opt) {
     $.ajax({

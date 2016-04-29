@@ -65,8 +65,6 @@ $(function() {
 });
 //引导页
 var showGuide = function(index) {
-    // musicBg.play();
-    console.log(index);
     var myTouch = util.toucher(document.getElementById('guide'));
     var len = winHeight > winWidth ? winWidth : winHeight;
     var isFinished = false;
@@ -533,6 +531,7 @@ var finishGame = function(timeCount, gmfCount) {
                 document.getElementById('bestTime').innerText = data.total_time;
                 document.getElementById('gmfCountAll').innerText = data.gmf_times;
                 document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id) / (data.pcnt) * 100);
+                console.log(data.top10);
                 $('#gameAfter').show();
             }
         }

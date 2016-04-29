@@ -18,7 +18,7 @@ var winWidth, winHeight, guideStatus = 0,
 var startTouchPoint, touchCacheX = 0.15,
     touchCacheY = 0.2;
 var startTime, pauseTime, gmfCounts = 0,
-    stepLength = 500;
+    stepLength = 1800;
 // 初始化页面
 $(function() {
     loadPlayerCnt();
@@ -247,6 +247,7 @@ var loop = function() {
         requestAnimationFrame(loop);
     } else {
         musicBg.pause();
+        musicWin.play();
         finishGame(formatMilli(runingTime), gmfCounts);
     }
 };
@@ -325,7 +326,8 @@ var renderAsideMile = function() {
     if (!nextAsideMile) {
         if (DF.Miles[mileIndex]) {
             if (DF.Miles[mileIndex] === '100') {
-                var finish = new Monster('zhongdian', 2, winWidth * 1.2, winWidth / 3, monIndex);
+                var finish = new Monster('zhongdian', 2, winWidth * 1.3, winWidth * 1.3 * 1.22, cheerIndex + 100);
+                finish.setAnchorPoint(0.5, 1);
                 monsters[monIndex] = finish;
                 noMoreMonster = true;
                 monIndex++;
@@ -519,13 +521,13 @@ var finishGame = function(timeCount, gmfCount) {
             // data = data ? $.parseJSON(data) : null;
             if (data && data.ret === 0) {
                 $.fn.cookie('uid', data.uid, {
-                    expires: 7
+                    expires: 120
                 });
+                document.getElementById('uid').innerText = uid;
                 document.getElementById('timeCount').innerText = timeCount;
                 document.getElementById('gmfCount').innerText = gmfCount;
                 document.getElementById('bestTime').innerText = data.total_time;
                 document.getElementById('gmfCountAll').innerText = data.gmf_times;
-                document.getElementById('currentRank').innerText = data.rank_id;
                 document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id) / (data.pcnt) * 100);
                 $('#gameAfter').show();
             }

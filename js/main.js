@@ -113,10 +113,10 @@ var showGuide = function(index) {
                 guideStatus = -1;
                 startTime = new Date().getTime();
             } else {
-                nextMonTime = currTime + 3000;
+                nextMonTime = currTime + 1200;
                 setTimeout(function() {
                     guideStatus = 0;
-                }, 3000);
+                }, 1200);
             }
         }
         stopPropagation(e);

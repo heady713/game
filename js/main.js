@@ -532,8 +532,7 @@ var finishGame = function(timeCount, gmfCount) {
 			    document.getElementById('gmfCount').innerText = gmfCount;
 			    document.getElementById('bestTime').innerText = formatMilli(data.total_time * 1000);
 			    document.getElementById('gmfCountAll').innerText = data.gmf_times;
-			    document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id)
-			        / (data.pcnt) * 100);
+			    document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id) / (data.pcnt) * 100);
 			    $('#currSort').text(data.rank_id);
 			    $('#gameAfter').show();
 		    }
@@ -638,14 +637,14 @@ var submitInfo = function() {
 					        content : '恭喜您中奖啦！请到兑奖说明中查看详情！',
 					        mask : true,
 					        min : true,
-					        delay : 2000
+					        delay : 5000
 					    });
 				    } else {
 					    dialog({
 					        content : '很遗憾，您没有抽到奖！',
 					        mask : true,
 					        min : true,
-					        delay : 2000
+					        delay : 5000
 					    });
 				    }
 			    }

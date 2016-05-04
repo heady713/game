@@ -692,7 +692,7 @@ var submitInfo = function() {
                 },
                 success: function(data) {
                     if (data && data.ret === 0) {
-                        if (data.win === 1) {
+                        if (data.win == 1) {
                             $('#giftImage').find('img').attr('src', 'images/jiayou_4.png');
                         } else {
                             $('#giftImage').find('img').attr('src', 'images/jiayou_2.png');

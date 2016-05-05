@@ -726,7 +726,7 @@ var submitInfo = function() {
             image.before('恭喜您中奖啦！');
             image.attr('src', 'images/jiayou_2.png');
         } else {
-            image.before('暂无奖品！');
+            image.before('未抽中奖励哦！');
             image.attr('src', 'images/jiayou_1.png');
         }
     };

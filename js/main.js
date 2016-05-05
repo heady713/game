@@ -528,8 +528,8 @@ var loadPlayerCnt = function() {
     });
     loadGamerGift();
     var hasRaffle = $.fn.cookie('hasRaffle');
-    if (hasRaffle != null && hasRaffle == 1) {
-        $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+    if (hasRaffle != null && hasRaffle == 0) {
+        $('#btnRaffle').hide(); // 如果未抽过奖即隐藏抽奖按钮
     }
 };
 // 游戏结束

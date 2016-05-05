@@ -76,6 +76,7 @@ $(function() {
         $(this).parent().siblings('div').eq($(this).index()).show();
     });
     $('.dialog_navbar').find('.dialog_navbar_item').eq(1).hide();
+
     $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
     isGuide = $.fn.cookie('isGuide');
 });
@@ -527,9 +528,11 @@ var loadPlayerCnt = function() {
         }
     });
     loadGamerGift();
+
     var hasRaffle = $.fn.cookie('hasRaffle');
-    if (hasRaffle != null && hasRaffle == 0) {
-        $('#btnRaffle').hide(); // 如果未抽过奖即隐藏抽奖按钮
+    if (hasRaffle != null && hasRaffle == 1) {
+        $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
     }
 };
 // 游戏结束
@@ -702,7 +705,7 @@ var submitInfo = function() {
                 },
                 success: function(data) {
                     if (data && data.ret === 0) {
-                        setGiftImage(data.win === 1);
+                        setGiftImage(data.win == 1);
                     }
                 }
             });

@@ -77,7 +77,14 @@ $(function() {
     });
     $('.dialog_navbar').find('.dialog_navbar_item').eq(1).hide();
 
-    $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
+    var hasRaffle = $.fn.cookie('hasRaffle');
+    if (hasRaffle != null && hasRaffle == 1) {
+        $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
+    } else {
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
+    }
+
     isGuide = $.fn.cookie('isGuide');
 });
 // 引导页

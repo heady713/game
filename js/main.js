@@ -726,9 +726,9 @@ var submitInfo = function() {
         var image = $('#giftImage').find('img');
         if (win) {
             image.before('恭喜您中奖啦！');
-            image.attr('src', 'images/jiayou_2.png');
+            image.attr('src', 'images/zhongjiang_a.png');
         } else {
             image.before('未抽中奖励哦！');
-            image.attr('src', 'images/jiayou_1.png');
+            image.attr('src', 'images/zhongjiang_b.png');
         }
     };

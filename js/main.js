@@ -381,7 +381,7 @@ var renderAsideCheer = function() {
     }
     if (!nextAsideCheer) {
         nextCheerTime = currTime + stepLength / 4;
-        var temp = new AsideCheer(getRoundVal(1, 2), 1, 90, 160, cheerIndex);
+        var temp = new AsideCheer(getRoundVal(1, 2), 1, 90, 140, cheerIndex);
         temp.setAnchorPoint(1, 1);
         var x = getRoundVal(0, 1) === 0 ? 0 : -20;
         temp.setPosition(x, winHeight);
@@ -403,7 +403,7 @@ var renderAsideCheer2 = function() {
     }
     if (!nextAsideCheer2) {
         nextCheerTime2 = currTime + stepLength / 4;
-        var temp = new AsideCheer(getRoundVal(4, 2), 2, 100, 120, cheerIndex2);
+        var temp = new AsideCheer(getRoundVal(4, 2), 2, 90, 140, cheerIndex2);
         temp.setAnchorPoint(0, 1);
         var x = getRoundVal(0, 1) === 0 ? 20 : 0;
         temp.setPosition(winWidth + x, winHeight);
@@ -562,6 +562,8 @@ var finishGame = function(timeCount, gmfCount) {
                     var hasRaffle = $.fn.cookie('hasRaffle');
                     if (hasRaffle != null && hasRaffle == 1) {
                         $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+                    } else {
+                    	$('#btnRaffle').show();
                     }
                 }
             }

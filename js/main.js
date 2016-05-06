@@ -76,7 +76,15 @@ $(function() {
         $(this).parent().siblings('div').eq($(this).index()).show();
     });
     $('.dialog_navbar').find('.dialog_navbar_item').eq(1).hide();
-    $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
+
+    var hasRaffle = $.fn.cookie('hasRaffle');
+    if (hasRaffle != null && hasRaffle == 1) {
+        $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
+    } else {
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
+    }
+
     isGuide = $.fn.cookie('isGuide');
 });
 // 引导页
@@ -527,9 +535,11 @@ var loadPlayerCnt = function() {
         }
     });
     loadGamerGift();
+
     var hasRaffle = $.fn.cookie('hasRaffle');
     if (hasRaffle != null && hasRaffle == 1) {
         $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
     }
 };
 // 游戏结束
@@ -704,7 +714,7 @@ var submitInfo = function() {
                 },
                 success: function(data) {
                     if (data && data.ret === 0) {
-                        setGiftImage(data.win === 1);
+                        setGiftImage(data.win == 1);
                     }
                 }
             });
@@ -718,7 +728,7 @@ var submitInfo = function() {
             image.before('恭喜您中奖啦！');
             image.attr('src', 'images/jiayou_2.png');
         } else {
-            image.before('暂无奖品！');
+            image.before('未抽中奖励哦！');
             image.attr('src', 'images/jiayou_1.png');
         }
     };

@@ -80,6 +80,7 @@ $(function() {
     var hasRaffle = $.fn.cookie('hasRaffle');
     if (hasRaffle != null && hasRaffle == 1) {
         $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();ge
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
     } else {
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
@@ -539,6 +540,8 @@ var loadPlayerCnt = function() {
     var hasRaffle = $.fn.cookie('hasRaffle');
     if (hasRaffle != null && hasRaffle == 1) {
         $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
+        loadGamerTop10();
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
     }
 };

@@ -75,14 +75,21 @@ $(function() {
         $(this).parent().siblings('div').hide();
         $(this).parent().siblings('div').eq($(this).index()).show();
     });
-    $('.dialog_navbar').find('.dialog_navbar_item').eq(1).hide();
+
+
+    var uPhone = $.fn.cookie('uPhone');
+    if (uPhone != null) {
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();
+    } else {
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).hide();
+    }
 
     var hasRaffle = $.fn.cookie('hasRaffle');
     if (hasRaffle != null && hasRaffle == 1) {
         $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
-        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
     } else {
+        $('#btnRaffle').show(); // 如果抽过奖即隐藏抽奖按钮
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
     }
 
@@ -537,13 +544,7 @@ var loadPlayerCnt = function() {
     });
     loadGamerGift();
 
-    var hasRaffle = $.fn.cookie('hasRaffle');
-    if (hasRaffle != null && hasRaffle == 1) {
-        $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
-        loadGamerTop10(false);
-        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();
-        $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
-    }
+    loadGamerTop10(false);
 };
 // 游戏结束
 var finishGame = function(timeCount, gmfCount) {
@@ -594,6 +595,10 @@ var finishGame = function(timeCount, gmfCount) {
                 },
                 success: function(data) {
                     if (data && data.ret === 0) {
+                        $.fn.cookie('rank_id', data.rank_id, {
+                            expires: 120
+                        });
+                        $('#currSort').text(data.rank_id);
                         var htmlContent = '',
                             dataVal = data.top10;
                         for (var i = 0; i < dataVal.length; i++) {
@@ -610,7 +615,9 @@ var finishGame = function(timeCount, gmfCount) {
             });
         } else {
             // 设置后续动作为 1 排行榜
-            $('#inputBox').data('todo', 1).show();
+            if (show) {
+                $('#inputBox').data('todo', 1).show();
+            }
         }
     },
     fmtNull = function(value) {

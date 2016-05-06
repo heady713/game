@@ -726,9 +726,9 @@ var submitInfo = function() {
         var image = $('#giftImage').find('img');
         if (win) {
             image.before('恭喜您中奖啦！');
-            image.attr('src', 'images/zhongjiang_a.png');
+            image.attr('src', 'images/zhongjiang_a.jpg');
         } else {
             image.before('未抽中奖励哦！');
-            image.attr('src', 'images/zhongjiang_b.png');
+            image.attr('src', 'images/zhongjiang_b.jpg');
         }
     };

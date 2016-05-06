@@ -540,7 +540,7 @@ var loadPlayerCnt = function() {
     var hasRaffle = $.fn.cookie('hasRaffle');
     if (hasRaffle != null && hasRaffle == 1) {
         $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
-        loadGamerTop10();
+        loadGamerTop10(false);
         $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
     }
@@ -582,7 +582,8 @@ var finishGame = function(timeCount, gmfCount) {
             }
         });
     },
-    loadGamerTop10 = function() {
+    loadGamerTop10 = function(show) {
+        var show = show || true;
         var uid = $.fn.cookie('uid');
         var uPhone = $.fn.cookie('uPhone');
         if (uPhone != null) {
@@ -602,7 +603,9 @@ var finishGame = function(timeCount, gmfCount) {
                                         <td>' + temp['total_time'] + '</td><td>' + temp['gmf_times'] + '</td></tr>';
                         }
                         $('#topTenBody').html(htmlContent);
-                        $('#activity').show();
+                        if (show) {
+                            $('#activity').show();
+                        };
                     }
                 }
             });

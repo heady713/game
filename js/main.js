@@ -59,7 +59,7 @@ $(function() {
         startGame();
         stopPropagation(event);
     }).on('touchstart', '#btnTopTen', function(event) {
-        loadGamerTop10();
+        loadGamerTop10(true);
         event.preventDefault();
     }).on('touchstart', '#btnRaffle', function(event) {
         loadGamerRaffle();
@@ -583,7 +583,6 @@ var finishGame = function(timeCount, gmfCount) {
         });
     },
     loadGamerTop10 = function(show) {
-        var show = show || true;
         var uid = $.fn.cookie('uid');
         var uPhone = $.fn.cookie('uPhone');
         if (uPhone != null) {
@@ -661,7 +660,7 @@ var submitInfo = function() {
                     // 后续动作
                     var todo = $('#inputBox').data('todo');
                     if (todo && todo == 1) {
-                        loadGamerTop10();
+                        loadGamerTop10(true);
                     } else if (todo && todo == 2) {
                         loadGamerRaffle();
                     }

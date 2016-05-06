@@ -80,7 +80,7 @@ $(function() {
     var hasRaffle = $.fn.cookie('hasRaffle');
     if (hasRaffle != null && hasRaffle == 1) {
         $('#btnRaffle').hide(); // 如果抽过奖即隐藏抽奖按钮
-        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();ge
+        $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show();
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
     } else {
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
@@ -730,10 +730,10 @@ var submitInfo = function() {
     setGiftImage = function(win) {
         var image = $('#giftImage').find('img');
         if (win) {
-            image.before('恭喜您中奖啦！');
+            // image.before('恭喜您中奖啦！');
             image.attr('src', 'images/zhongjiang_a.jpg');
         } else {
-            image.before('未抽中奖励哦！');
+            // image.before('未抽中奖励哦！');
             image.attr('src', 'images/zhongjiang_b.jpg');
         }
     };

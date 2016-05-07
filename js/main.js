@@ -158,7 +158,7 @@ var showGuide = function(index) {
         $('#guide').show();
     } else {
         var container = $('#guide').find('.container');
-        container.removeClass('guide_bg_2').addClass('guide_bg_1').find('article').html('GIME ME FIVE！<br/>给市运会加油！<br/>');
+        container.removeClass('guide_bg_2').addClass('guide_bg_1').find('article').html('Give me five！<br/>为市运会助力！<br/>');
         $('#guide').show();
     }
     $('#guide').data('index', index);

@@ -622,24 +622,16 @@ var finishGame = function(timeCount, gmfCount) {
 var submitInfo = function() {
         var phone = $('#phone').val();
         var userName = $('#userName').val();
-        if (phone === '' || phone.length != 11) {
-            dialog({
-                content: '请填写您的信息以便我们能联系到您！',
-                mask: true,
-                min: true,
-                delay: 2000
-            });
-            return false;
-        }
         if (userName === '' || userName.length > 16) {
-            dialog({
-                content: '请填写您的信息以便我们能联系到您！',
-                mask: true,
-                min: true,
-                delay: 2000
-            });
+            $('#userName').parent().addClass('bd_rd');
             return false;
         }
+        if (phone === '' || phone.length != 11) {
+            $('#phone').parent().addClass('bd_rd');
+            return false;
+        }
+        $('#phone').parent().removeClass('bd_rd');
+        $('#userName').parent().removeClass('bd_rd');
         var uid = $.fn.cookie('uid');
         executeAjax({
             url: service + 'info.php',
@@ -689,8 +681,8 @@ var submitInfo = function() {
                     });
                     $('#btnRaffle').hide();
                     $('#inputBox').data('todo', 0).hide();
-                    $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show();
                     $('#activity').show();
+                    $('.dialog_navbar').find('.dialog_navbar_item').eq(1).show().trigger('touchstart');
                 }
             });
         } else {

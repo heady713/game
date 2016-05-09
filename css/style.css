@@ -350,6 +350,10 @@ audio {
     margin-left: 0px;
 }
 
+#inputBox .bd_rd {
+    border: 1px solid #ff0000;
+}
+
 .btn {
     height: 30px;
     line-height: 29px;
@@ -408,6 +412,7 @@ audio {
     border-radius: 5px;
     background: #fff;
     padding: 2px;
+    border: 1px solid #fff;
 }
 
 .weui_input {

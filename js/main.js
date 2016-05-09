@@ -41,7 +41,9 @@ $(function() {
         stopPropagation(event);
     });
     $('body').on('touchstart touchmove', function(event) {
-        event.preventDefault();
+        if ($(event.target).closest('#activity').length > 0) {} else {
+            event.preventDefault();
+        }
     });
     $('input').on('touchstart', function(event) {
         $(this).focus();

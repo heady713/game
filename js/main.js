@@ -600,6 +600,7 @@ var finishGame = function(timeCount, gmfCount) {
                         $('#topTenBody').html(htmlContent);
                         if (show) {
                             $('#activity').show();
+                            $('#inputBox').data('todo', 1).show();
                         };
                     }
                 }
@@ -650,6 +651,7 @@ var submitInfo = function() {
                     } else if (todo && todo == 2) {
                         loadGamerRaffle();
                     }
+                    $('#inputBox').data('todo', 0).hide();
                 } else {
                     dialog({
                         content: '提交失败！请重试',
@@ -678,7 +680,6 @@ var submitInfo = function() {
                         expires: 120
                     });
                     $('#btnRaffle').hide();
-                    $('#inputBox').data('todo', 0).hide();
                     $('#activity').show();
                     $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show().trigger('touchstart');
                 }

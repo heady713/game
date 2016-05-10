@@ -11,6 +11,6 @@ CREATE TABLE `record` (
   `modify_time` timestamp NULL DEFAULT NULL,
   `play_times` int(11) NOT NULL,
   `gift` tinyint(4) NOT NULL DEFAULT '0',
-  `win` tinyint(4) NOT NULL DEFAULT '0',
+  `win` int(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;

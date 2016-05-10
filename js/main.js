@@ -600,7 +600,7 @@ var finishGame = function(timeCount, gmfCount) {
                         $('#topTenBody').html(htmlContent);
                         if (show) {
                             $('#activity').show();
-                            $('#inputBox').data('todo', 1).show();
+                            $('#inputBox').data('todo', 0).hide();
                         };
                     }
                 }

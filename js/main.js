@@ -90,6 +90,7 @@ $(function() {
         $('.dialog_navbar').find('.dialog_navbar_item').eq(2).hide();
     }
     isGuide = $.fn.cookie('isGuide');
+    $('#btnRaffle').hide();
 });
 // 引导页
 var showGuide = function(index) {
@@ -568,6 +569,7 @@ var finishGame = function(timeCount, gmfCount) {
                     document.getElementById('currentPersent').innerText = Math.round((data.pcnt - data.rank_id) / (data.pcnt) * 100);
                     $('#currSort').text(data.rank_id);
                     $('#gameAfter').show();
+                    $('#btnRaffle').show();
                 }
             }
         });
@@ -670,11 +672,12 @@ var submitInfo = function() {
                 },
                 success: function(data) {
                     if (data && data.ret === 0) {
-                        setGiftImage(data.win === 1);
+                        setGiftImage(parseInt(data.win) >= 1);
                     }
                     $.fn.cookie('hasRaffle', 1, {
                         expires: 120
                     });
+                    $('#btnRaffle').hide();
                     $('#inputBox').data('todo', 0).hide();
                     $('#activity').show();
                     $('.dialog_navbar').find('.dialog_navbar_item').eq(2).show().trigger('touchstart');
@@ -695,7 +698,7 @@ var submitInfo = function() {
                 },
                 success: function(data) {
                     if (data && data.ret === 0) {
-                        setGiftImage(data.win == 1);
+                        setGiftImage(parseInt(data.win) >= 1);
                     }
                 }
             });

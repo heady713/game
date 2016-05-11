@@ -405,6 +405,7 @@ audio {
 }
 
 .weui_cell_primary {
+    -webkit-transform: translate3d(0,0,0);
     -webkit-box-flex: 1;
     -webkit-flex: 1;
     -ms-flex: 1;

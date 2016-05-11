@@ -23,4 +23,4 @@ CREATE TABLE `all_record` (
   uid int(11) NOT NULL,
   play_time timestamp NULL DEFAULT NULL,
   PRIMARY KEY (record_id)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=600 DEFAULT CHARSET=utf8;

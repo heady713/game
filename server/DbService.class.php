@@ -1,7 +1,7 @@
 <?php
 /**
  * 数据库接口
- * @authors Nemo (heady713@gmail.com)
+ * @authors Nemo
  * @date    2016-04-12 12:55:46
  * @version $Id$
  */
@@ -175,7 +175,7 @@ class DbService {
 
 		//玩的次数
 		$all_play_cnt = $this->db->insert("all_record", [
-				"uid"   => 1,
+				"uid"        => $uid,
 				"#play_time" => "NOW()"
 			]
 		);
@@ -272,22 +272,22 @@ class DbService {
 		$phone_no = $qry["phone_no"];
 		$name     = $qry["name"];
 
-		//判断电话号码是否唯一
-		$results = $this->db->select("record", [
-				"phone_no"
-			], [
-				"phone_no" => $phone_no
-			]
-		);
-		if ($this->hasErr()) {
-			$ack["ret"] = 2;
-			return false;
-		}
+		// //判断电话号码是否唯一
+		// $results = $this->db->select("record", [
+		// 		"phone_no"
+		// 	], [
+		// 		"phone_no" => $phone_no
+		// 	]
+		// );
+		// if ($this->hasErr()) {
+		// 	$ack["ret"] = 2;
+		// 	return false;
+		// }
 
-		if (count($results) > 0) {
-			$ack["ret"] = 3;
-			return false;
-		}
+		// if (count($results) > 0) {
+		// 	$ack["ret"] = 3;
+		// 	return false;
+		// }
 
 		$this->db->update("record", [
 				"phone_no" => $phone_no,

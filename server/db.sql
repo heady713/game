@@ -13,4 +13,14 @@ CREATE TABLE `record` (
   `gift` tinyint(4) NOT NULL DEFAULT '0',
   `win` int(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`uid`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+
+CREATE TABLE `all_record` (
+  record_id int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  uid int(11) NOT NULL,
+  play_time timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (record_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

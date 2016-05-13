@@ -339,9 +339,9 @@ class DbService {
 		// 	return false;
 		// }
 
-		$r = rand(0, 100);
+		$r = rand(0, 1000);
 		$win = 0;
-		if ($r <= 5) {
+		if ($r <= 10) {
 			$win = 1;
 		}
 

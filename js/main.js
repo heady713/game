@@ -25,17 +25,13 @@ $(function() {
     loadGamerGift();
     loadGamerTop10(false);
     initAudio();
-    $('#submitPwd').on('touchstart', function() {
-        var pwd = $('#password').val();
-        if (pwd && pwd.length > 0) {
-            checkPassport(pwd);
-        }
-    });
     $('#gameBefore').on('touchstart', '#btnStart', function(event) {
         $('#gameBefore').hide();
         $('#gameing').show();
         initStage();
         musicBg.play();
+        musicGmf.play();
+        musicGmf.pause();
         stopPropagation(event);
     });
     $('#gameBefore').on('touchstart', '.present', function(event) {

@@ -104,6 +104,15 @@ html, body {
     font-size: 1.4em;
 }
 
+.background .downBox .company {
+    position: absolute;
+    width: 100%;
+    color: #ffffff;
+    font-size: 1.2em;
+    text-align: center;
+    bottom: 10px;
+}
+
 audio {
     position: absolute;
     z-index: 5;

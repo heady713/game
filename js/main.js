@@ -31,7 +31,6 @@ $(function() {
         initStage();
         musicBg.play();
         musicGmf.play();
-        musicGmf.pause();
         stopPropagation(event);
     });
     $('#gameBefore').on('touchstart', '.present', function(event) {
